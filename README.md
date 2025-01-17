@@ -1,5 +1,7 @@
 # break_infinity.dart
-BigInt replacement that can hold up to 1e9e15. Dart port of [Patashu/break_infinity.js](https://github.com/Patashu/break_infinity.js)
+`BigInt` and `double` replacement that can hold up to 1e9e15 for Dart. 
+
+Dart port of [Patashu/break_infinity.js](https://github.com/Patashu/break_infinity.js)
 
 ## Usage
 Install the library
