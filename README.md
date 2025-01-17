@@ -15,3 +15,12 @@ import "package:break_infinity/break_infinity.dart";
 ```
 
 Voilà! For more information on additional usage, read the documentation [here]().
+
+
+## Acknowledgements
+
+### [Patashu/break_infinity.js](https://github.com/Patashu/break_infinity.js)
+The original implementation
+
+### [AD417/BreakInfinity.java](https://github.com/AD417/BreakInfinity.java)
+Java port which helped porting it to Dart :)
