@@ -1,2 +1,17 @@
 # break_infinity.dart
-BigInt replacement that can hold up to 1e9e15. Dart port of the popular break_infinity.js by patashu
+BigInt replacement that can hold up to 1e9e15. Dart port of [Patashu/break_infinity.js](https://github.com/Patashu/break_infinity.js)
+
+## Usage
+Install the library
+
+```bash
+flutter pub add break_infinity
+```
+
+Import the library into your project
+
+```dart
+import "package:break_infinity/break_infinity.dart";
+```
+
+Voilà! For more information on additional usage, read the documentation [here]().
