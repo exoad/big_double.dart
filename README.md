@@ -14,7 +14,7 @@ Import the library into your project
 import "package:break_infinity/break_infinity.dart";
 ```
 
-Voilà! For more information on additional usage, read the documentation [here]().
+_**Voilà!**_ For more information on additional usage, read the documentation [here]().
 
 
 ## Acknowledgements
