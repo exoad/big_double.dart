@@ -7,6 +7,12 @@ Dart port of [Patashu/break_infinity.js](https://github.com/Patashu/break_infini
 Install the library
 
 ```bash
+dart pub add break_infinity
+```
+
+or
+
+```bash
 flutter pub add break_infinity
 ```
 
