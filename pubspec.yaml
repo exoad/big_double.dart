@@ -1,0 +1,12 @@
+name: break_infinity
+description: BigInt replacement that can hold up to 1e9e15. Dart port of the popular break_infinity.js by patashu
+version: 1.0.0
+repository: https://github.com/exoad/break_infinity.dart
+
+environment:
+  sdk: ^3.6.0
+  flutter: any
+
+dev_dependencies:
+  lints: ^5.0.0
+  test: ^1.24.0
