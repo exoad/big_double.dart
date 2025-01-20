@@ -1,4 +1,4 @@
-import 'package:break_infinity/src/src.dart';
+import 'package:break_infinity/src/helpers.dart';
 
 List<double> __generate() {
   List<double> res = List<double>.filled(numberExpMax - numberExpMin, 0);
