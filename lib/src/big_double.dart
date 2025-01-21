@@ -310,7 +310,7 @@ class BigDouble implements Comparable<BigDouble> {
         !other.isNaN &&
         (_sameInfinity(other) ||
             _exponent == other._exponent &&
-                (_mantissa - other._mantissa) < (tolerance ?? roundTolerance));
+                (_mantissa - other._mantissa) <= (tolerance ?? roundTolerance));
   }
 
   /// Equality checking without using tolerance. If you need tolerance, use [BigDouble.equalsWithTolerance]
@@ -477,12 +477,12 @@ class BigDouble implements Comparable<BigDouble> {
     } else if (_exponent > numberExpMax) {
       return _mantissa.isPositive ? double.infinity : double.negativeInfinity;
     } else if (_exponent < numberExpMin) {
-      return 0.0;
+      return 0;
     } else if (_exponent == numberExpMin) {
       return _mantissa > 0 ? 5e-324 : -5e-324;
     }
     double res = _mantissa * lookupPowerOf10(_exponent);
-    if (!res.isFinite || _exponent < 0) {
+    if (res.isInfinite || _exponent.isNegative) {
       return res;
     }
     double rounded = res.roundToDouble();
@@ -497,10 +497,10 @@ BigDouble _normalize(double mantissa, int exponent) {
   } else if (mantissa == 0) {
     return BigDouble.zero;
   }
-  int newExp = (dart_math.log(mantissa.abs()) / dart_math.ln10).toInt();
+  int newExp = (dart_math.log(mantissa.abs()) ~/ dart_math.ln10).toInt();
   return BigDouble._noNormalize(
       newExp == numberExpMin
-          ? mantissa * 10 / 1e-323
+          ? mantissa * 10.0 / 1e-323
           : mantissa / lookupPowerOf10(newExp),
       exponent + newExp);
 }

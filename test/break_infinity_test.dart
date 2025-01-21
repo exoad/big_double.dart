@@ -51,8 +51,8 @@ void main() {
   });
   group("BigDouble Arithmetic Tests", () {
     for (int i = 0; i < 1000; i++) {
-      test("BigDouble($i)* BigDouble($i) == ${i * i}", () {
-        expect(i.big * i.big, (i * i).big);
+      test("BigDouble($i) * BigDouble($i) == ${i * i}", () {
+        expect((i.big * i.big).toDouble(), i * i);
       });
     }
     for (int i = 100; i < 878; i++) {

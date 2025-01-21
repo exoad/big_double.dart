@@ -14,7 +14,7 @@ const int numberExpMax = 308;
 const int numberExpMin = -324;
 
 /// Tolerance which is used for Number conversion to compensate floating-point error.
-final double roundTolerance = isJavaScript ? 1e-10 : 1e-18;
+final double roundTolerance = 1e-10;
 
 // The following is adapted from https://github.com/dart-lang/sdk/issues/41717#issuecomment-622312466
 
