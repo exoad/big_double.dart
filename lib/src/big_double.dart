@@ -141,6 +141,10 @@ final class BigDoubleIntrospect {
 /// for accuracy, [BigDouble] focuses on sacrificing accuracy over time for far better
 /// performance (10-1000x) with a "good enough estimation". For this reason, it is very useful for creating incremental games or other quantities that do not need high accuracies at large magnitudes.
 class BigDouble implements Comparable<BigDouble> {
+  /// Used for internal operations
+  static final dart_math.Random _random =
+      dart_math.Random(DateTime.now().millisecondsSinceEpoch);
+
   /// Represents the value of `0`
   static final BigDouble zero = BigDouble._noNormalize(0, 0);
 
@@ -210,6 +214,12 @@ class BigDouble implements Comparable<BigDouble> {
       return nan;
     }
     return res;
+  }
+
+  /// Given a [mantissaMax] and [exponentMax], generate a random [BigDouble] instance
+  factory BigDouble.random({int mantissaMax = 100, int exponentMax = 10}) {
+    return BigDouble._noNormalize(
+        _random.nextDouble() * mantissaMax, _random.nextInt(exponentMax));
   }
 
   /// Constructs a [BigDouble] instance with the given mantissa and exponent.

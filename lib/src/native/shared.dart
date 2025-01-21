@@ -16,3 +16,6 @@ const double roundTolerance = 1e-10;
 
 /// Represents the smallest 64 bit integer on native platforms supported by Dart
 const int intMinValue = -0x8000000000000000;
+
+/// Represents the largest 64 bit integer on native platforms
+const int intMaxValue = 0x7FFFFFFFFFFFFFFF;

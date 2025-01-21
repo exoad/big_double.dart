@@ -17,3 +17,6 @@ const double roundTolerance = 1e-10;
 
 /// Represents the smallest integer on web platforms supported by JavaScript
 const double intMinValue = -double.maxFinite;
+
+/// Represents the largest integer on native platforms
+const double intMaxValue = double.maxFinite;
