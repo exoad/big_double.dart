@@ -102,6 +102,46 @@ final class BigMath {
   static double log(BigDouble value) {
     return 2.302585092994046 * log10(value);
   }
+
+  static BigDouble pow10(double power, double tolerance) {
+    int v = power.toInt();
+    double residual = power - v;
+    return residual.abs() < tolerance
+        ? BigDouble._noNormalize(1, v)
+        : _normalize(dart_math.pow(10, residual).toDouble(), v);
+  }
+
+  /// Raises a BigDouble [value] to [power] (ie [value] ^ [power])
+  static BigDouble pow(BigDouble value, double power, [double? tolerance]) {
+    if (value._mantissa.isZero) {
+      return power.isZero ? BigDouble.one : value;
+    }
+    if (value._mantissa.isNegative && !CasualNumerics.isSafe(power.abs())) {
+      return BigDouble.nan;
+    } else if (value._exponent == 1 && value._mantissa - 1 < -double.maxFinite) {
+      return pow10(power, (tolerance ?? roundTolerance));
+    }
+    double fast = value._exponent * power;
+    double mantissa;
+    if (CasualNumerics.isSafe(fast.abs())) {
+      mantissa = dart_math.pow(value._mantissa, power).toDouble();
+      if (mantissa.isFinite && !mantissa.isZero) {
+        return _normalize(mantissa, fast.toInt());
+      }
+    }
+    int newExp = fast.toInt();
+    double residual2 = fast - newExp;
+    mantissa = dart_math
+        .pow(10, power * CasualNumerics.log10(value._mantissa) + residual2)
+        .toDouble();
+    if (mantissa.isFinite && !mantissa.isZero) {
+      return _normalize(mantissa, newExp);
+    }
+    BigDouble res = pow10(
+        power * (value._exponent + CasualNumerics.log10(value._mantissa.abs())),
+        (tolerance ?? roundTolerance));
+    return value.sign == -1 && power % 2 == 1 ? -res : res;
+  }
 }
 
 /// For either debugging or looking into the two core values within a [BigDouble] instance.
@@ -134,6 +174,18 @@ final class BigDoubleIntrospect {
 /// for accuracy, [BigDouble] focuses on sacrificing accuracy over time for far better
 /// performance (10-1000x) with a "good enough estimation". For this reason, it is very useful for creating incremental games or other quantities that do not need high accuracies at large magnitudes.
 class BigDouble implements Comparable<BigDouble> {
+  /// Whether to use the `+` sign for positive numbers in [toString]
+  /// By default it is `true`
+  static bool _usePositiveExpSign = true;
+
+  /// Whether to use the `+` sign for positive numbers in [toString]
+  /// By default it is `true`
+  static bool get usePostiveExpSign => _usePositiveExpSign;
+
+  /// Whether to use the `+` sign for positive numbers in [toString]
+  /// By default it is `true`
+  static set usePositiveExpSign(bool r) => _usePositiveExpSign = r;
+
   /// Used for internal operations
   static final dart_math.Random _random =
       dart_math.Random(DateTime.now().millisecondsSinceEpoch);
@@ -145,7 +197,7 @@ class BigDouble implements Comparable<BigDouble> {
   static final BigDouble one = BigDouble._noNormalize(1, 0);
 
   /// Repressents a [BigDouble] that is Not a Number using [double.nan]
-  static final BigDouble nan = BigDouble._noNormalize(double.nan, intMinValue);
+  static final BigDouble nan = BigDouble._noNormalize(double.nan, minInt);
 
   /// Represents positive infinity for this [BigDouble] instance utilizing [double.infinity]
   static final BigDouble infinity = BigDouble._noNormalize(double.infinity, 0);
@@ -160,6 +212,7 @@ class BigDouble implements Comparable<BigDouble> {
   /// Determines how the decimal point should move.
   late int _exponent;
 
+  /// Internal constructor
   BigDouble._noNormalize(double mantissa, int exponent)
       : _mantissa = mantissa,
         _exponent = exponent;
@@ -215,8 +268,6 @@ class BigDouble implements Comparable<BigDouble> {
   }
 
   /// Constructs a [BigDouble] instance with the given mantissa and exponent.
-  ///
-  ///
   BigDouble(double mantissa, int exponent) {
     BigDouble normalized = _normalize(mantissa, exponent);
     _mantissa = normalized._mantissa;
@@ -236,7 +287,8 @@ class BigDouble implements Comparable<BigDouble> {
   /// Whether this [BigDouble] instance is Not a Number.
   bool get isNaN => _mantissa.isNaN;
 
-  bool _sameInfinity(BigDouble other) {
+  /// Internal: for determining whether both are either positive or negative infinity.
+  bool _sameInfinity(covariant BigDouble other) {
     return isPositiveInfinity && other.isPositiveInfinity ||
         isNegativeInfinity && other.isNegativeInfinity;
   }
@@ -250,12 +302,13 @@ class BigDouble implements Comparable<BigDouble> {
   }
 
   /// If you don't want tolerance checking, use [BigDouble.equalsRaw]
-  bool equalsWithTolerance(covariant Object other, [double tolerance = roundTolerance]) {
+  bool equalsWithTolerance(covariant Object other, [double? tolerance]) {
     return other is BigDouble &&
         !isNaN &&
         !other.isNaN &&
         (_sameInfinity(other) ||
-            _exponent == other._exponent && (_mantissa - other._mantissa) < tolerance);
+            _exponent == other._exponent &&
+                (_mantissa - other._mantissa) < (tolerance ?? roundTolerance));
   }
 
   /// Equality checking without using tolerance. If you need tolerance, use [BigDouble.equalsWithTolerance]
@@ -266,28 +319,28 @@ class BigDouble implements Comparable<BigDouble> {
   }
 
   /// Some additional checks used internally by all comparison operators
-  bool _comparisonPreCheck(BigDouble other) {
+  bool _comparisonPreCheck(covariant BigDouble other) {
     return !(isNaN || other.isNaN);
   }
 
   /// If this [BigDouble] is greater than [other]
-  bool operator >(BigDouble other) {
+  bool operator >(covariant BigDouble other) {
     return _comparisonPreCheck(other) && compareTo(other) > 0;
   }
 
   /// If this [BigDouble] is less than [other]
-  bool operator <(BigDouble other) {
+  bool operator <(covariant BigDouble other) {
     return _comparisonPreCheck(other) &&
         compareTo(other) < 0; // never catch me using if statements
   }
 
   /// If this [BigDouble] is greater than or equal to [other]
-  bool operator >=(BigDouble other) {
+  bool operator >=(covariant BigDouble other) {
     return _comparisonPreCheck(other) && compareTo(other) >= 0;
   }
 
   /// If this [BigDouble] is less than or equal to [other]
-  bool operator <=(BigDouble other) {
+  bool operator <=(covariant BigDouble other) {
     return _comparisonPreCheck(other) && compareTo(other) <= 0;
   }
 
@@ -321,7 +374,7 @@ class BigDouble implements Comparable<BigDouble> {
   }
 
   /// Multiplies this [BigDouble] with [other]; multiplication.
-  BigDouble operator *(BigDouble other) {
+  BigDouble operator *(covariant BigDouble other) {
     return _normalize(_mantissa * other._mantissa, _exponent + other._exponent);
   }
 
@@ -330,18 +383,18 @@ class BigDouble implements Comparable<BigDouble> {
 
   /// Divides this [BigDouble] with [other]; division.
   /// Under the hood it calls [BigDouble.*]
-  BigDouble operator /(BigDouble other) {
+  BigDouble operator /(covariant BigDouble other) {
     return this * other.reciprocal;
   }
 
   /// Subtracts this [BigDouble] with [other]; subtraction.
   /// Under the hood it calls [BigDouble.+]
-  BigDouble operator -(BigDouble other) {
+  BigDouble operator -(covariant BigDouble other) {
     return this + -other;
   }
 
   /// Adds this [BigDouble] with [other]; addition.
-  BigDouble operator +(BigDouble other) {
+  BigDouble operator +(covariant BigDouble other) {
     if (isInfinity) {
       return this;
     } else if (other.isInfinity) {
@@ -377,14 +430,36 @@ class BigDouble implements Comparable<BigDouble> {
   /// to a mathematical integer. Can return `this`.
   /// If the value is [nan] or [isInfinity], then the same value is returned.
   BigDouble get floor {
-    if (isInfinity) {
-      return this;
-    } else if (_exponent < -1) {
-      return _mantissa.sign >= 0 ? zero : -one;
-    } else if (_exponent < maxSignificantDigits) {
-      return BigDouble.fromValue(toDouble().floorToDouble());
-    }
-    return this;
+    return isInfinity
+        ? this
+        : _exponent < -1
+            ? (-_mantissa.sign >= 0 ? zero : -one)
+            : _exponent < maxSignificantDigits
+                ? BigDouble.fromValue(toDouble().floorToDouble())
+                : this;
+  }
+
+  /// Computes the smallest [BigDouble] that is greater than or equal to a mathematical integer. if the
+  /// value of this [BigInteger] is [nan] or [isInfinity], then the same value `this` is returned.
+  BigDouble get ceil {
+    return isInfinity
+        ? this
+        : _exponent < -1
+            ? (_mantissa.sign > 0 ? one : zero)
+            : _exponent < maxSignificantDigits
+                ? BigDouble.fromValue(toDouble().ceilToDouble())
+                : this;
+  }
+
+  @override
+  String toString() {
+    return isInfinity
+        ? _mantissa.toString()
+        : _exponent <= -expLimit
+            ? "0"
+            : _exponent < 21 && _exponent > -7
+                ? toDouble().toString()
+                : "${_mantissa}e${_exponent >= 0 ? (_usePositiveExpSign ? "+" : "") : "-"}$_exponent";
   }
 
   @override
@@ -393,7 +468,7 @@ class BigDouble implements Comparable<BigDouble> {
   /// Converts this [BigDouble] instance to a double with [tolerance] to an exact integer if possible.
   /// If `this` is too big, it will return infinity.
   /// If `this` is too small, it will return 0.
-  double toDouble([double tolerance = roundTolerance]) {
+  double toDouble([double? tolerance]) {
     if (isNaN) {
       return double.nan;
     } else if (_exponent > numberExpMax) {
@@ -408,7 +483,7 @@ class BigDouble implements Comparable<BigDouble> {
       return res;
     }
     double rounded = res.roundToDouble();
-    return (rounded - res).abs() < roundTolerance ? rounded : res;
+    return (rounded - res).abs() < (tolerance ?? roundTolerance) ? rounded : res;
   }
 }
 

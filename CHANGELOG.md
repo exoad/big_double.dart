@@ -1,3 +1,9 @@
+## 1.0.3
+
+- Added `pow` which allows for using the exponential
+- Added `toString` for a String representation
+- Optimized for detection of webs and properly handling `double` and `int` constraints.
+
 ## 1.0.2
 
 - Fixed some issues with comparisons for equality

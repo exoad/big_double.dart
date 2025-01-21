@@ -1,25 +1,19 @@
 import 'dart:math' as dart_math;
 
-export "package:break_infinity/src/native/shared.dart"
-    if (dart.library.js_interop) "package:break_infinity/src/web/shared.dart";
+import 'package:break_infinity/src/shared.dart';
 
-extension HelpfulDouble on double {
-  /// Represents the smallest positive [double] value that is greater than 0.
-  static const double epsilon = 4.94065645841247e-324;
-}
+export "package:break_infinity/src/shared.dart";
 
+/// Reports whether whatever application is bundled is running via the JavaScript runtime.
+bool get isJavaScript => identical(1.0, 1);
+
+/// Some random extensions for dealing with numbers.
 extension HelpfulNum on num {
   /// Whether this [num] is positive (greater than 0)
   bool get isPositive => this > 0;
 
   /// Whether this [num] is zero (equal to 0)
-  bool get isZero => this == 0;
-
-  /// Whether this [num] is odd
-  bool get isOdd => this % 2 != 0;
-
-  /// Whether this [num] is even
-  bool get isEvent => !isOdd;
+  bool get isZero => this is double ? this < roundTolerance : this == 0;
 }
 
 /// Much of the functions perfom much worse in accuracy over time as compared
@@ -30,4 +24,10 @@ class CasualNumerics {
 
   /// Returns the base 10 logarithm of this [num] instance.
   static double log10(num x) => dart_math.log(x) / dart_math.ln10;
+
+  static bool isSafe(double x) {
+    return isJavaScript
+        ? x > -9007199254740991 && x < 9007199254740991 && x.floor() == x
+        : x.isZero;
+  }
 }
