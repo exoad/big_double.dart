@@ -14,7 +14,7 @@ extension IntBigDoublify on int {
   BigDouble get big => switch (this) {
         0 => BigDouble.zero,
         1 => BigDouble.one,
-        _ => BigDouble.fromValue(this.toDouble())
+        _ => BigDouble.fromValue(this.roundToDouble())
       };
 }
 
@@ -46,7 +46,7 @@ extension DoubleBigDoublify on double {
   /// ```dart
   /// var bigBigBig = (3.0).big;
   /// ```
-  BigDouble get big => this.isNaN
+  BigDouble get big => isNaN
       ? BigDouble.nan
       : switch (this) {
           0 => BigDouble.zero,
@@ -300,17 +300,12 @@ class BigDouble implements Comparable<BigDouble> {
 
   @override
   bool operator ==(covariant Object other) {
-    return equalsWithTolerance(other);
-  }
-
-  /// If you don't want tolerance checking, use [BigDouble.equalsRaw]
-  bool equalsWithTolerance(covariant Object other, [double? tolerance]) {
     return other is BigDouble &&
         !isNaN &&
         !other.isNaN &&
         (_sameInfinity(other) ||
             _exponent == other._exponent &&
-                (_mantissa - other._mantissa) <= (tolerance ?? roundTolerance));
+                (_mantissa - other._mantissa).abs() < roundTolerance);
   }
 
   /// Equality checking without using tolerance. If you need tolerance, use [BigDouble.equalsWithTolerance]
@@ -426,13 +421,13 @@ class BigDouble implements Comparable<BigDouble> {
             bigger._exponent - 14);
   }
 
-  /// Returns a [BigDouble] instance that is the absolute value of this [BigDouble].
-  BigDouble get abs => BigDouble._noNormalize(_mantissa.abs(), _exponent);
+  /// Returns a [BigDouble] instance that is the abs()olute value of this [BigDouble].
+  BigDouble abs() => BigDouble._noNormalize(_mantissa.abs(), _exponent);
 
   /// Computes the largest [BigDouble] value that is less than or equal to `this` and is equal
   /// to a mathematical integer. Can return `this`.
   /// If the value is [nan] or [isInfinity], then the same value is returned.
-  BigDouble get floor {
+  BigDouble floor() {
     return !isFinite
         ? this
         : _exponent < -1
@@ -444,7 +439,7 @@ class BigDouble implements Comparable<BigDouble> {
 
   /// Computes the smallest [BigDouble] that is greater than or equal to a mathematical integer. if the
   /// value of this [BigInteger] is [nan] or [isInfinity], then the same value `this` is returned.
-  BigDouble get ceil {
+  BigDouble ceil() {
     return isInfinity
         ? this
         : _exponent < -1
@@ -497,7 +492,7 @@ BigDouble _normalize(double mantissa, int exponent) {
   } else if (mantissa == 0) {
     return BigDouble.zero;
   }
-  int newExp = (dart_math.log(mantissa.abs()) ~/ dart_math.ln10).toInt();
+  int newExp = (dart_math.log(mantissa.abs()) / dart_math.ln10).toInt();
   return BigDouble._noNormalize(
       newExp == numberExpMin
           ? mantissa * 10.0 / 1e-323

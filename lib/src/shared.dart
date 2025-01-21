@@ -1,3 +1,4 @@
+import 'package:break_infinity/break_infinity.dart';
 import 'package:break_infinity/src/helpers.dart';
 
 /// For example: if two exponents are more than 17 apart,
@@ -15,6 +16,8 @@ const int numberExpMin = -324;
 
 /// Tolerance which is used for Number conversion to compensate floating-point error.
 final double roundTolerance = 1e-10;
+
+final BigDouble roundToleranceForm = BigDouble(1, -10);
 
 // The following is adapted from https://github.com/dart-lang/sdk/issues/41717#issuecomment-622312466
 

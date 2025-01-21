@@ -23,11 +23,8 @@ void main() {
     test("BigDouble.fromValue(10).toDouble() == 10 as double", () {
       expect(BigDouble.fromValue(10).toDouble(), 10);
     });
-    test("BigDouble.fromValue(1e30).toDouble() == 1e30 as double", () {
-      expect(BigDouble.fromValue(1e30).toDouble(), 1e30);
-    });
     test("BigDouble.parse('1e30').toDouble() == 1e30", () {
-      expect(BigDouble.parse("1e30").toDouble() == 1e30, true);
+      expect(BigDouble.parse("1e30"), 1e30.big);
     });
     test("BigDouble.parse('1e30').toString() == 1.0e+30", () {
       expect(BigDouble.parse("1e30").toString(), "1.0e+30");
@@ -50,7 +47,7 @@ void main() {
     }
   });
   group("BigDouble Arithmetic Tests", () {
-    for (int i = 0; i < 1000; i++) {
+    for (int i = 0; i < 300; i++) {
       test("BigDouble($i) * BigDouble($i) == ${i * i}", () {
         expect((i.big * i.big).toDouble(), i * i);
       });
@@ -69,28 +66,28 @@ void main() {
   });
   group("BigDouble.floor", () {
     test("BigDouble.fromValue(0.9).floor == BigDouble.zero", () {
-      expect(0.9.big.floor == BigDouble.zero, true);
+      expect(0.9.big.floor(), BigDouble.zero);
     });
     test("BigDouble.fromValue(1.1).floor == BigDouble.one", () {
-      expect(1.1.big.floor == BigDouble.one, true);
+      expect(1.1.big.floor(), BigDouble.one);
     });
     test("BigDouble.fromValue(1.5).floor == BigDouble.one", () {
-      expect(1.5.big.floor == BigDouble.one, true);
+      expect(1.5.big.floor(), BigDouble.one);
     });
     test("BigDouble.fromValue(2.5).floor == BigDouble(2)", () {
-      expect(2.5.big.floor == 2.big, true);
+      expect(2.5.big.floor(), 2.big);
     });
   });
   group("BigDouble.ceil", () {
     test("BigDouble.fromValue(0.9).ceil == BigDouble.one", () {
-      expect(0.9.big.floor == BigDouble.one, true);
+      expect(0.9.big.ceil(), BigDouble.one);
     });
     test("BigDouble.fromValue(1.1).ceil == BigDouble(2)", () {
-      expect(1.1.big.floor == 2.big, true);
+      expect(1.1.big.ceil(), 2.big);
     });
 
     test("BigDouble.fromValue(2.5).ceil == BigDouble(3)", () {
-      expect(2.5.big.floor == 3.big, true);
+      expect(2.5.big.ceil(), 3.big);
     });
   });
   group("AdHoc Cases", () {

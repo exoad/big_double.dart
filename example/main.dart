@@ -7,5 +7,5 @@ void main() {
   print(
       "Mantissa = ${BigDoubleIntrospect.mantissa(sum)}\nExponent = ${BigDoubleIntrospect.exponent(sum)}");
   BigDouble product = BigDouble.fromValue(996) * BigDouble.fromValue(996);
-  print(product.toDouble());
+  print(product.toDouble().round());
 }
