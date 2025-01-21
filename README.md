@@ -1,10 +1,12 @@
 # break_infinity.dart
-![Tests](https://img.shields.io/github/actions/workflow/status/exoad/break_infinity.dart/tests.yml?style=flat-square&label=tests) ![Pub Publisher](https://img.shields.io/pub/publisher/break_infinity?style=flat-square)
+![Tests](https://img.shields.io/github/actions/workflow/status/exoad/break_infinity.dart/tests.yml?style=flat-square&label=native%20tests) ![Pub Publisher](https://img.shields.io/pub/publisher/break_infinity?style=flat-square)
 
 
 `BigInt` and `double` replacement that can hold up to 1e9e15 for Dart.
 
 Dart port of [Patashu/break_infinity.js](https://github.com/Patashu/break_infinity.js)
+
+<a href="https://www.buymeacoffee.com/exoad" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="width:170px" ></a>
 
 ## Usage
 Install the library
@@ -48,3 +50,9 @@ The original implementation
 
 ### [AD417/BreakInfinity.java](https://github.com/AD417/BreakInfinity.java)
 Java port which helped porting it to Dart :)
+
+### Contributors
+
+<a href="https://github.com/exoad/break_infinity.dart/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=exoad/break_infinity.dart" />
+</a>
