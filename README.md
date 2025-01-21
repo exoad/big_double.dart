@@ -50,3 +50,9 @@ The original implementation
 
 ### [AD417/BreakInfinity.java](https://github.com/AD417/BreakInfinity.java)
 Java port which helped porting it to Dart :)
+
+### Contributors
+
+<a href="https://github.com/exoad/break_infinity.dart/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=exoad/break_infinity.dart" />
+</a>
