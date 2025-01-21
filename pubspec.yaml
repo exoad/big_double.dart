@@ -1,6 +1,6 @@
 name: break_infinity
 description: BigInt and double replacement that can hold up to 1e9e15 that focuses on speed.
-version: 1.0.3
+version: 1.0.4
 repository: https://github.com/exoad/break_infinity.dart
 
 environment:

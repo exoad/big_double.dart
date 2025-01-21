@@ -1,3 +1,7 @@
+## 1.0.4
+
+- Fixed value normalization bug
+
 ## 1.0.3
 
 - Added `pow` which allows for using the exponential

@@ -219,13 +219,15 @@ class BigDouble implements Comparable<BigDouble> {
 
   /// Generates a [BigDouble] instance with the provided [double] value.
   factory BigDouble.fromValue(double value) {
-    return value.isNaN
+    BigDouble other;
+    other = value.isNaN
         ? nan
         : value.isInfinite
-            ? (value.isPositive ? infinity : negativeInfinity)
+            ? (value > 0 ? infinity : negativeInfinity)
             : value.isZero
                 ? zero
                 : _normalize(value, 0);
+    return other;
   }
 
   /// Parses a [BigDouble] from a String literal. If it is not recognizable using the exponential
@@ -404,8 +406,8 @@ class BigDouble implements Comparable<BigDouble> {
     } else if (other._mantissa.isZero) {
       return this;
     }
-    late BigDouble bigger;
-    late BigDouble smaller;
+    BigDouble bigger;
+    BigDouble smaller;
     if (_exponent > other._exponent) {
       bigger = this;
       smaller = other;
@@ -416,10 +418,11 @@ class BigDouble implements Comparable<BigDouble> {
     return bigger._exponent - smaller._exponent > maxSignificantDigits
         ? bigger
         : _normalize(
-            1e14 * bigger._mantissa +
-                (1e14 *
-                    smaller._mantissa *
-                    lookupPowerOf10(smaller._exponent - bigger._exponent).round()),
+            (1e14 * bigger._mantissa +
+                    1e14 *
+                        smaller._mantissa *
+                        lookupPowerOf10(smaller._exponent - bigger._exponent))
+                .roundToDouble(),
             bigger._exponent - 14);
   }
 
@@ -430,7 +433,7 @@ class BigDouble implements Comparable<BigDouble> {
   /// to a mathematical integer. Can return `this`.
   /// If the value is [nan] or [isInfinity], then the same value is returned.
   BigDouble get floor {
-    return isInfinity
+    return !isFinite
         ? this
         : _exponent < -1
             ? (-_mantissa.sign >= 0 ? zero : -one)
@@ -455,7 +458,7 @@ class BigDouble implements Comparable<BigDouble> {
   String toString() {
     return isInfinity
         ? _mantissa.toString()
-        : _exponent <= -expLimit
+        : _exponent <= -expLimit || _mantissa == 0
             ? "0"
             : _exponent < 21 && _exponent > -7
                 ? toDouble().toString()
@@ -489,12 +492,12 @@ class BigDouble implements Comparable<BigDouble> {
 
 /// Internal function
 BigDouble _normalize(double mantissa, int exponent) {
-  if (mantissa >= 1 && mantissa < 10 || mantissa.isFinite) {
+  if (mantissa >= 1 && mantissa < 10 || !mantissa.isFinite) {
     return BigDouble._noNormalize(mantissa, exponent);
   } else if (mantissa == 0) {
     return BigDouble.zero;
   }
-  int newExp = (dart_math.log(mantissa.abs()) / dart_math.ln10) as int;
+  int newExp = (dart_math.log(mantissa.abs()) / dart_math.ln10).toInt();
   return BigDouble._noNormalize(
       newExp == numberExpMin
           ? mantissa * 10 / 1e-323
