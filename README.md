@@ -6,6 +6,8 @@
 
 Dart port of [Patashu/break_infinity.js](https://github.com/Patashu/break_infinity.js)
 
+<a href="https://www.buymeacoffee.com/exoad" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="width:170px" ></a>
+
 ## Usage
 Install the library
 
