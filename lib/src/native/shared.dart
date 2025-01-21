@@ -3,7 +3,7 @@
 const int maxSignificantDigits = 17;
 
 /// Highest value you can safely put here is `0x7FFFFFFFFFFFFFFF - MAX_SIGNIFICANT_DIGITS` where the int.max is represented as the
-const int expLimit = 0x7FFFFFFFFFFFFFFF - maxSignificantDigits;
+const int expLimit = intMaxValue - maxSignificantDigits;
 
 /// The largest exponent that can appear in a Number, though not all mantissas are valid here.
 const int numberExpMax = 308;

@@ -37,11 +37,18 @@ void main() {
     test("BigDouble(123, 5) == BigDouble(1.23, 7)", () {
       expect(BigDouble(123, 5).toDouble(), BigDouble(1.23, 7).toDouble());
     });
+    for (int i = 1; i < 1000; i++) {
+      test("BigDouble(${-i}) < BigDouble($i) == true", () {
+        expect(-i.big < i.big, true);
+      });
+    }
   });
   group("BigDouble Arithmetic Tests", () {
-    test("BigDouble(1) + BigDouble(2) all as double == 3 as double", () {
-      expect((1.big + 2.big).toDouble(), 3.0);
-    });
+    for (int i = 0; i < 1000; i++) {
+      test("BigDouble($i)* BigDouble($i) == ${i * i}", () {
+        expect(i.big * i.big, (i * i).big);
+      });
+    }
   });
   group("AdHoc Cases", () {
     for (int i = 0; i < 1000; i++) {

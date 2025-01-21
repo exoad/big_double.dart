@@ -4,7 +4,7 @@ const double maxSignificantDigits = 17;
 
 /// Highest value you can safely put here is `1.7976931348623157e+308 - MAX_SIGNIFICANT_DIGITS` which int.max is
 /// calculated with [double.maxFinite]
-const double expLimit = double.maxFinite - maxSignificantDigits;
+const double expLimit = intMaxValue - maxSignificantDigits;
 
 /// The largest exponent that can appear in a Number, though not all mantissas are valid here.
 const double numberExpMax = 308;

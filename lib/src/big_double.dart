@@ -7,9 +7,7 @@ import 'package:break_infinity/src/helpers.dart';
 /// methods [IntBigDoublify.big]
 extension IntBigDoublify on int {
   /// Converts this [int] instance to a [BigDouble] instance.
-  ///
   /// Usage:
-  ///
   /// ```dart
   /// var bigBigBig = 3.big;
   /// ```
@@ -23,7 +21,6 @@ extension IntBigDoublify on int {
 /// Converts a tuple in the form of `(double,int)` where the first element
 /// of [double] is the mantissa and the second element of [int] is the
 /// exponent into a [BigDouble] instance.
-///
 /// Note: that this does not return any of the [BigDouble.one] or [BigDouble.zero]
 /// instances as covering these cases is futile.
 extension Tuple1BigDoublify on (
@@ -31,11 +28,13 @@ extension Tuple1BigDoublify on (
   int
   /*exponent*/
 ) {
+  /// Converts this tuple to an appropriate [BigDouble] instance
   BigDouble get big => BigDouble(this.$1, this.$2);
 }
 
 /// Same as [Tuple1BigDoublify] but the first element is of type int.
 extension Tuple2BigDoublify on (int, int) {
+  /// Converts this tuple to an appropriate [BigDouble] instance
   BigDouble get big => BigDouble(this.$1.toDouble(), this.$2);
 }
 
@@ -43,9 +42,7 @@ extension Tuple2BigDoublify on (int, int) {
 /// methods [DoubleBigDoublify.big]
 extension DoubleBigDoublify on double {
   /// Converts this [double] instance to a [BigDouble] instance.
-  ///
   /// Usage:
-  ///
   /// ```dart
   /// var bigBigBig = (3.0).big;
   /// ```
@@ -62,7 +59,6 @@ extension DoubleBigDoublify on double {
 
 /// Additional helper functions for using [BigDouble]. These functions are things like
 /// [BigDouble.max] and others which operate on multiple [BigDouble] instances.
-///
 /// Think of it like the "dart:math" module. Furthermore, some of these functions are also
 /// used inside of [BigDouble] itself.
 final class BigMath {
@@ -87,7 +83,6 @@ final class BigMath {
   }
 
   /// Performs a square root on the [BigDouble] instance.
-  ///
   /// If the argument is NaN or less than zero, this function will return [BigDouble.nan].
   static BigDouble sqrt(BigDouble value) {
     return value._mantissa.isNegative
@@ -98,17 +93,18 @@ final class BigMath {
             : _normalize(dart_math.sqrt(value._mantissa), value._exponent ~/ 2);
   }
 
+  /// Log base 10. Utilizes a vary rough calculation from [CasualNumerics]
   static double log10(BigDouble value) {
     return value._exponent * CasualNumerics.log10(value._mantissa);
   }
 
+  /// Returns the log of [value]
   static double log(BigDouble value) {
     return 2.302585092994046 * log10(value);
   }
 }
 
 /// For either debugging or looking into the two core values within a [BigDouble] instance.
-///
 /// Some of these functions can be dangerous and introduce unpredictable behavior.
 final class BigDoubleIntrospect {
   BigDoubleIntrospect._();
@@ -120,14 +116,12 @@ final class BigDoubleIntrospect {
   static int exponent(BigDouble value) => value._exponent;
 
   /// **DESTRUCTIVE ACTION**
-  ///
   /// Changes [value]'s mantissa to [newValue]
   static void changeMantissa(BigDouble value, double newValue) {
     value._mantissa = newValue;
   }
 
   /// **DESTRUCTIVE ACTION**
-  ///
   /// Changes [value]'s exponent to [newValue]
   static void changeExponent(BigDouble value, int newValue) {
     value._exponent = newValue;
@@ -136,7 +130,6 @@ final class BigDoubleIntrospect {
 
 /// The break_infinity implementation in Dart. This is capable of exceeding 1e308 and is based
 /// on Patashu's break_infinity.js implementation. https://patashu.github.io/break_infinity.js/index.html
-///
 /// As compared to Dart's own [BigInt] which sacrifices speed and performance over time
 /// for accuracy, [BigDouble] focuses on sacrificing accuracy over time for far better
 /// performance (10-1000x) with a "good enough estimation". For this reason, it is very useful for creating incremental games or other quantities that do not need high accuracies at large magnitudes.
@@ -184,7 +177,6 @@ class BigDouble implements Comparable<BigDouble> {
 
   /// Parses a [BigDouble] from a String literal. If it is not recognizable using the exponential
   /// format, this constructor will throw a [FormatException].
-  ///
   /// If you don't want exceptions, prefer using [BigDouble.tryParse]
   factory BigDouble.parse(String value) /*throws Exception*/ {
     if (value.indexOf("e") != -1) {
@@ -254,7 +246,7 @@ class BigDouble implements Comparable<BigDouble> {
 
   @override
   bool operator ==(covariant Object other) {
-    return other is BigDouble && !isNaN && !other.isNaN && (_sameInfinity(other));
+    return equalsWithTolerance(other);
   }
 
   /// If you don't want tolerance checking, use [BigDouble.equalsRaw]
@@ -273,54 +265,59 @@ class BigDouble implements Comparable<BigDouble> {
         _exponent == other._exponent;
   }
 
+  /// Some additional checks used internally by all comparison operators
+  bool _comparisonPreCheck(BigDouble other) {
+    return !(isNaN || other.isNaN);
+  }
+
   /// If this [BigDouble] is greater than [other]
   bool operator >(BigDouble other) {
-    return isNaN || other.isNaN
-        ? false
-        : _mantissa.isZero
-            ? other._mantissa.isNegative
-            : other._mantissa.isZero
-                ? _mantissa.isPositive
-                : _exponent == other._exponent
-                    ? _mantissa > other._mantissa
-                    : _mantissa.isPositive
-                        ? (other._mantissa.isNegative || _exponent > other._exponent)
-                        : _exponent < other._exponent &&
-                            other._mantissa
-                                .isNegative; // never catch me using if statements
+    return _comparisonPreCheck(other) && compareTo(other) > 0;
   }
 
   /// If this [BigDouble] is less than [other]
   bool operator <(BigDouble other) {
-    return isNaN || other.isNaN
-        ? false
-        : _mantissa.isZero
-            ? other._mantissa.isPositive
-            : other._mantissa.isZero
-                ? _mantissa.isNegative
-                : _exponent == other._exponent
-                    ? _mantissa < other._mantissa
-                    : _mantissa.isPositive
-                        ? (other._mantissa.isPositive && _exponent < other._exponent)
-                        : _exponent > other._exponent ||
-                            other._mantissa
-                                .isPositive; // never catch me using if statements
+    return _comparisonPreCheck(other) &&
+        compareTo(other) < 0; // never catch me using if statements
   }
 
   /// If this [BigDouble] is greater than or equal to [other]
   bool operator >=(BigDouble other) {
-    return isNaN || other.isNaN ? false : !(this < other);
+    return _comparisonPreCheck(other) && compareTo(other) >= 0;
   }
 
   /// If this [BigDouble] is less than or equal to [other]
   bool operator <=(BigDouble other) {
-    return isNaN || other.isNaN ? false : !(this > other);
+    return _comparisonPreCheck(other) && compareTo(other) <= 0;
   }
 
-  /// Negate this [BigDouble] and returns `this`
+  int _compareToHelper(covariant BigDouble other) {
+    int c = _exponent.compareTo(other._exponent);
+    return c != 0
+        ? (_mantissa.isPositive ? c : -c)
+        : _mantissa.compareTo(other._mantissa);
+  }
+
+  @override
+  int compareTo(covariant BigDouble other) {
+    return _mantissa.isZero ||
+            other._mantissa.isZero ||
+            isNaN ||
+            other.isNaN ||
+            isInfinity ||
+            other.isInfinity
+        ? _mantissa.compareTo(other._mantissa)
+        : _mantissa.isPositive && other._mantissa.isNegative
+            ? 1
+            : _mantissa.isNegative && other._mantissa.isPositive
+                ? -1
+                : _compareToHelper(other);
+  }
+
+  /// Negate this [BigDouble]
   BigDouble operator -() {
-    _mantissa = -_mantissa;
-    return this;
+    return BigDouble(-_mantissa,
+        _exponent); // we have to return a new value to avoid modifying the globals
   }
 
   /// Multiplies this [BigDouble] with [other]; multiplication.
@@ -332,14 +329,12 @@ class BigDouble implements Comparable<BigDouble> {
   BigDouble get reciprocal => _normalize(1 / _mantissa, -_exponent);
 
   /// Divides this [BigDouble] with [other]; division.
-  ///
   /// Under the hood it calls [BigDouble.*]
   BigDouble operator /(BigDouble other) {
     return this * other.reciprocal;
   }
 
   /// Subtracts this [BigDouble] with [other]; subtraction.
-  ///
   /// Under the hood it calls [BigDouble.+]
   BigDouble operator -(BigDouble other) {
     return this + -other;
@@ -375,11 +370,11 @@ class BigDouble implements Comparable<BigDouble> {
             bigger._exponent - 14);
   }
 
+  /// Returns a [BigDouble] instance that is the absolute value of this [BigDouble].
   BigDouble get abs => BigDouble._noNormalize(_mantissa.abs(), _exponent);
 
   /// Computes the largest [BigDouble] value that is less than or equal to `this` and is equal
   /// to a mathematical integer. Can return `this`.
-  ///
   /// If the value is [nan] or [isInfinity], then the same value is returned.
   BigDouble get floor {
     if (isInfinity) {
@@ -395,31 +390,8 @@ class BigDouble implements Comparable<BigDouble> {
   @override
   int get hashCode => (_mantissa.hashCode * 397) ^ _exponent.hashCode;
 
-  @override
-  int compareTo(covariant BigDouble other) {
-    return _mantissa.isZero ||
-            other._mantissa.isZero ||
-            isNaN ||
-            other.isNaN ||
-            isInfinity ||
-            other.isInfinity
-        ? _mantissa.compareTo(other._mantissa)
-        : _mantissa.isPositive && other._mantissa.isNegative
-            ? 1
-            : _mantissa.isNegative && other._mantissa.isPositive
-                ? -1
-                : () {
-                    int c = _exponent.compareTo(other._exponent);
-                    return c != 0
-                        ? (_mantissa.isPositive ? c : -c)
-                        : _mantissa.compareTo(other._mantissa);
-                  }(); // TODO: maybe reimplement all of this jargon using if statements lol
-  }
-
   /// Converts this [BigDouble] instance to a double with [tolerance] to an exact integer if possible.
-  ///
   /// If `this` is too big, it will return infinity.
-  ///
   /// If `this` is too small, it will return 0.
   double toDouble([double tolerance = roundTolerance]) {
     if (isNaN) {
@@ -440,6 +412,7 @@ class BigDouble implements Comparable<BigDouble> {
   }
 }
 
+/// Internal function
 BigDouble _normalize(double mantissa, int exponent) {
   if (mantissa >= 1 && mantissa < 10 || mantissa.isFinite) {
     return BigDouble._noNormalize(mantissa, exponent);
