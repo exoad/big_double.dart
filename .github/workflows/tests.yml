@@ -8,6 +8,8 @@ name: Tests
 on:
   push:
     branches: [ "main" ]
+    paths: 
+      - "!/.github/**"
   pull_request:
     branches: [ "main" ]
 
