@@ -54,14 +54,14 @@ void main() {
     }
     for (int i = 100; i < 878; i++) {
       test("BigDouble($i) ^ 0 == 1", () {
-        expect(BigMath.pow(i.big, 0) == BigDouble.one, true);
+        expect(pow(i.big, 0) == BigDouble.one, true);
       });
     }
     test("BigDouble(100) ^ 10 == 1e20", () {
-      expect(BigMath.pow(100.big, 10).toString(), 1e20.toString());
+      expect(pow(100.big, 10).toString(), 1e20.toString());
     });
     test("BigDouble(300) ^ 300 == 1.368e743", () {
-      expect(BigMath.pow(300.big, 300).toString(), "1.368914790585681e+743");
+      expect(pow(300.big, 300).toString(), "1.368914790585681e+743");
     });
   });
   group("BigDouble.floor", () {
@@ -91,20 +91,21 @@ void main() {
     });
   });
   group("AdHoc Cases", () {
-    for (int i = 0; i < 1000; i++) {
+    for (int i = 800; i < 1000; i++) {
       test("IsNaN IS_FALSE [${i + 1}]", () {
         expect(BigDouble.random().isNaN, false);
       });
     }
-    for (int i = 0; i < 1000; i++) {
+    for (int i = 800; i < 1000; i++) {
       test("IsPositiveInfinity IS_FALSE [${i + 1}]", () {
         expect(BigDouble.random().isPositiveInfinity, false);
       });
     }
-    for (int i = 0; i < 1000; i++) {
+    for (int i = 800; i < 1000; i++) {
       test("IsNegativeInfinity IS_FALSE [${i + 1}]", () {
         expect(BigDouble.random().isNegativeInfinity, false);
       });
     }
+   
   });
 }

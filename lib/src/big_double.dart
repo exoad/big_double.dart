@@ -57,103 +57,90 @@ extension DoubleBigDoublify on double {
         };
 }
 
-/// Additional helper functions for using [BigDouble]. These functions are things like
-/// [BigDouble.max] and others which operate on multiple [BigDouble] instances.
-/// Think of it like the "dart:math" module. Furthermore, some of these functions are also
-/// used inside of [BigDouble] itself.
-final class BigMath {
-  BigMath._();
-
-  /// Returns the max of two [BigDouble] instances.
-  static BigDouble max(BigDouble a, BigDouble b) {
-    return a.isNaN || b.isNaN
-        ? BigDouble.nan
-        : a > b
-            ? a
-            : b;
-  }
-
-  /// Returns the min of two [BigDouble] instances.
-  static BigDouble min(BigDouble a, BigDouble b) {
-    return a.isNaN || b.isNaN
-        ? BigDouble.nan
-        : a > b
-            ? b
-            : a;
-  }
-
-  /// Performs a square root on the [BigDouble] instance.
-  /// If the argument is NaN or less than zero, this function will return [BigDouble.nan].
-  static BigDouble sqrt(BigDouble value) {
-    return value._mantissa.isNegative
-        ? BigDouble.nan
-        : value._exponent.isOdd
-            ? _normalize(dart_math.sqrt(value._mantissa) * 3.16227766016838,
-                (value._exponent - 1) ~/ 2)
-            : _normalize(dart_math.sqrt(value._mantissa), value._exponent ~/ 2);
-  }
-
-  /// Log base 10. Utilizes a vary rough calculation from [CasualNumerics]
-  static double log10(BigDouble value) {
-    return value._exponent * CasualNumerics.log10(value._mantissa);
-  }
-
-  /// Returns the log of [value]
-  static double log(BigDouble value) {
-    return 2.302585092994046 * log10(value);
-  }
-
-  static BigDouble pow10(double power, double tolerance) {
-    int v = power.toInt();
-    double residual = power - v;
-    return residual.abs() < tolerance
-        ? BigDouble._noNormalize(1, v)
-        : _normalize(dart_math.pow(10, residual).toDouble(), v);
-  }
-
-  /// Raises a BigDouble [value] to [power] (ie [value] ^ [power])
-  static BigDouble pow(BigDouble value, double power, [double? tolerance]) {
-    if (value._mantissa.isZero) {
-      return power.isZero ? BigDouble.one : value;
-    }
-    if (value._mantissa.isNegative && !CasualNumerics.isSafe(power.abs())) {
-      return BigDouble.nan;
-    } else if (value._exponent == 1 && value._mantissa - 1 < -double.maxFinite) {
-      return pow10(power, (tolerance ?? roundTolerance));
-    }
-    double fast = value._exponent * power;
-    double mantissa;
-    if (CasualNumerics.isSafe(fast.abs())) {
-      mantissa = dart_math.pow(value._mantissa, power).toDouble();
-      if (mantissa.isFinite && !mantissa.isZero) {
-        return _normalize(mantissa, fast.toInt());
-      }
-    }
-    int newExp = fast.toInt();
-    double residual2 = fast - newExp;
-    mantissa = dart_math
-        .pow(10, power * CasualNumerics.log10(value._mantissa) + residual2)
-        .toDouble();
-    if (mantissa.isFinite && !mantissa.isZero) {
-      return _normalize(mantissa, newExp);
-    }
-    BigDouble res = pow10(
-        power * (value._exponent + CasualNumerics.log10(value._mantissa.abs())),
-        (tolerance ?? roundTolerance));
-    return value.sign == -1 && power % 2 == 1 ? -res : res;
-  }
+/// Returns the max of two [BigDouble] instances.
+BigDouble max(BigDouble a, BigDouble b) {
+  return a.isNaN || b.isNaN
+      ? BigDouble.nan
+      : a > b
+          ? a
+          : b;
 }
 
-/// For either debugging or looking into the two core values within a [BigDouble] instance.
-/// Some of these functions can be dangerous and introduce unpredictable behavior.
-final class BigDoubleIntrospect {
-  BigDoubleIntrospect._();
+/// Returns the min of two [BigDouble] instances.
+BigDouble min(BigDouble a, BigDouble b) {
+  return a.isNaN || b.isNaN
+      ? BigDouble.nan
+      : a > b
+          ? b
+          : a;
+}
 
-  /// Gets the mantissa value
-  static double mantissa(BigDouble value) => value._mantissa;
+/// Performs a square root on the [BigDouble] instance.
+/// If the argument is NaN or less than zero, this function will return [BigDouble.nan].
+BigDouble sqrt(BigDouble value) {
+  return value.mantissa.isNegative
+      ? BigDouble.nan
+      : value.exponent.isOdd
+          ? _normalize(dart_math.sqrt(value.mantissa) * 3.16227766016838,
+              (value.exponent - 1) ~/ 2)
+          : _normalize(dart_math.sqrt(value.mantissa), value.exponent ~/ 2);
+}
 
-  /// Gets the exponent value
-  static int exponent(BigDouble value) => value._exponent;
+/// Log base 10. Utilizes a vary rough calculation from [CasualNumerics]
+double log10(BigDouble value) {
+  return value.exponent * CasualNumerics.log10(value.mantissa);
+}
+
+/// Returns the log of [value]
+double log(BigDouble value) {
+  return 2.302585092994046 * log10(value);
+}
+
+BigDouble pow10(double power, double tolerance) {
+  int v = power.toInt();
+  double residual = power - v;
+  return residual.abs() < tolerance
+      ? BigDouble._noNormalize(1, v)
+      : _normalize(dart_math.pow(10, residual).toDouble(), v);
+}
+
+/// Raises a BigDouble [value] to [power] (ie [value] ^ [power])
+BigDouble pow(BigDouble value, double power, [double? tolerance]) {
+  if (value.mantissa.isZero) {
+    return power.isZero ? BigDouble.one : value;
+  }
+  if (value._mantissa.isNegative && !CasualNumerics.isSafe(power.abs())) {
+    return BigDouble.nan;
+  } else if (value.exponent == 1 && value.mantissa - 1 < -double.maxFinite) {
+    return pow10(power, (tolerance ?? roundTolerance));
+  }
+  double fast = value.exponent * power;
+  double mantissa;
+  if (CasualNumerics.isSafe(fast.abs())) {
+    mantissa = dart_math.pow(value.mantissa, power).toDouble();
+    if (mantissa.isFinite && !mantissa.isZero) {
+      return _normalize(mantissa, fast.toInt());
+    }
+  }
+  int newExp = fast.toInt();
+  double residual2 = fast - newExp;
+  mantissa = dart_math
+      .pow(10, power * CasualNumerics.log10(value.mantissa) + residual2)
+      .toDouble();
+  if (mantissa.isFinite && !mantissa.isZero) {
+    return _normalize(mantissa, newExp);
+  }
+  BigDouble res = pow10(
+      power * (value.exponent + CasualNumerics.log10(value.mantissa.abs())),
+      (tolerance ?? roundTolerance));
+  return value.sign == -1 && power % 2 == 1 ? -res : res;
+}
+
+/// For altering the mantissa and exponent values within [BigDouble]. BigDouble by itself
+/// allows for introspection (viewing the values), but does not allow for modification in
+/// order to keep [BigDouble] instance normalized.
+final class BigIntrospect {
+  BigIntrospect._();
 
   /// **DESTRUCTIVE ACTION**
   /// Changes [value]'s mantissa to [newValue]
@@ -307,6 +294,12 @@ class BigDouble implements Comparable<BigDouble> {
             _exponent == other._exponent &&
                 (_mantissa - other._mantissa).abs() < roundTolerance);
   }
+
+  /// Returns the mantissa
+  double get mantissa => _mantissa;
+
+  /// Returns the exponent
+  int get exponent => _exponent;
 
   /// Equality checking without using tolerance. If you need tolerance, use [BigDouble.equalsWithTolerance]
   bool equalsRaw(covariant Object other) {
