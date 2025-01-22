@@ -1,3 +1,12 @@
+## 1.0.5
+
+- Additional precision fixes between `web` and `native` platforms
+- Additional `isJavaScript` check for certain operations
+- Removed `+` appending to `toString()` by default
+- `BigDoubleIntrospect` renamed to `BigIntrospect`
+- Removed `BigMath` container and the functions now live right in `big_double.dart`
+- Allowed viewing the mantissa and exponent values, but you will need `BigIntrospect` to modify
+
 ## 1.0.4
 
 - Fixed value normalization bug
