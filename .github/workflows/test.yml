@@ -39,7 +39,12 @@ jobs:
           else
             dart test --chain-stack-traces --reporter=failures-only --file-reporter "json:test_results/reports_native.json";
           fi
-
+      - name: Upload test results
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results-${{ matrix.target }}
+          path: test_results
+          retention-days: 3
   summarize:
     name: Upload results
     needs: tests
