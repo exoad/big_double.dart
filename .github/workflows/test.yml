@@ -1,0 +1,47 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: Tests Native (pnode)
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "!/.github/**"
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  gather:
+    name: Gather dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+      - uses: dart-lang/setup-dart@9a04e6d73cca37bd455e0608d7e5092f881fd603
+      - name: Install dependencies
+        run: dart pub get
+      - name: Analyze project source
+        run: dart analyze --fatal-infos
+  web:
+    name: Run web (nodejs)
+    needs: gather
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run web tests
+        run: web_test=$(dart test -pnode --chain-stack-traces --failures-only --js-trace --file-reporter "json:test_results/reports_web.json")
+  native:
+    name: Run native (kernel)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run native tests
+        run: native_test=$(dart test --chain-stack-traces --failures-only --file-reporter "json:test_results/reports_native.json")
+  summarize:
+    name: Upload results
+    runs-on: ubuntu-latest
+    steps:
+      - name: Write workflow summary
+        run: |
+          SUMMARY=```##Web\n$web_test\n##Native\n$native_test```

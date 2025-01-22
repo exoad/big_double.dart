@@ -1,6 +1,5 @@
 # break_infinity.dart
-![Tests](https://img.shields.io/github/actions/workflow/status/exoad/break_infinity.dart/tests.yml?style=flat-square&label=native%20tests) ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/exoad/break_infinity.dart/tests_pNode.yml?style=flat-square&label=tests%20(web-nodejs))
-
+![Tests](https://img.shields.io/github/actions/workflow/status/exoad/break_infinity.dart/tests.yml?style=flat-square&label=native%20tests)
 
 `BigInt` and `double` replacement that can hold up to 1e9e15 for Dart.
 
@@ -41,7 +40,7 @@ This library primarily operates to support both `native` and `web` platforms. Th
 > From [dart-lang/sdk](https://github.com/dart-lang/sdk)
 
 However, the internal workings of this library depends on `int` and `double`, but the constraints of these [types varies between `web` and `native`](https://dart.dev/language/built-in-types#numbers) which can cause anomalies when building
-a program for both of these platforms. Therefore, when targetting `web`, this library will utilize constants defined with `double` in [lib/src/web/shared.dart](./lib/src/web/shared.dart). On the other hand, when targeting `native`, `int` (64 bit) constants from [lib/src/native/shared.dart](./lib/src/native/shared.dart) will be used. 
+a program for both of these platforms. Therefore, when targetting `web`, this library will utilize constants defined with `double` in [lib/src/web/shared.dart](./lib/src/web/shared.dart). On the other hand, when targeting `native`, `int` (64 bit) constants from [lib/src/native/shared.dart](./lib/src/native/shared.dart) will be used.
 
 ## Acknowledgements
 
