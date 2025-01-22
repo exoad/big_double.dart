@@ -32,7 +32,7 @@ jobs:
       - name: Analyze project source
         run: dart analyze --fatal-infos
       - name: Test
-        run: dart test -pnode --chain-stack-traces --reporter=failures-only --js-trace --file-reporter "json:test_results/reports_web.json"
+        run: dart test -pnode --chain-stack-traces --reporter=github --verbose-trace --js-trace --file-reporter "json:test_results/reports_web.json"
       - name: Upload web test results
         uses: actions/upload-artifact@v3
         with:
@@ -50,7 +50,7 @@ jobs:
       - name: Analyze project source
         run: dart analyze --fatal-infos
       - name: Test
-        run: dart test --chain-stack-traces --reporter=failures-only --file-reporter "json:test_results/reports_native.json"
+        run: dart test --chain-stack-traces --reporter=github --verbose-trace --file-reporter "json:test_results/reports_native.json"
       - name: Upload native test results
         uses: actions/upload-artifact@v3
         with:
