@@ -1,5 +1,5 @@
 # break_infinity.dart
-![Tests](https://img.shields.io/github/actions/workflow/status/exoad/break_infinity.dart/tests.yml?style=flat-square&label=native%20tests)
+![Tests](https://img.shields.io/github/actions/workflow/status/exoad/break_infinity.dart/test.yml?style=flat-square&label=tests%20status)
 
 `BigInt` and `double` replacement that can hold up to 1e9e15 for Dart.
 
