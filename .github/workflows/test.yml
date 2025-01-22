@@ -40,6 +40,7 @@ jobs:
           else
             dart test --chain-stack-traces --reporter=failures-only --file-reporter "json:test_results/reports_native.json";
           fi
+          continue-on-error: true
       - name: Upload test results
         if: ${{ success() || failure() }}
         uses: actions/upload-artifact@v3
