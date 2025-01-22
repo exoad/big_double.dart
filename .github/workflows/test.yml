@@ -35,9 +35,9 @@ jobs:
       - name: Run ${{ matrix.target }} tests
         run: |
           if [ "${{ matrix.target }}" == "web" ]; then
-            dart test -pnode --chain-stack-traces --failures-only --js-trace --file-reporter "json:test_results/reports_web.json";
+            dart test -pnode --chain-stack-traces --reporter=failures-only --js-trace --file-reporter "json:test_results/reports_web.json";
           else
-            dart test --chain-stack-traces --failures-only --file-reporter "json:test_results/reports_native.json";
+            dart test --chain-stack-traces --reporter=failures-only --file-reporter "json:test_results/reports_native.json";
           fi
 
   summarize:
