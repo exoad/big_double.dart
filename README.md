@@ -33,7 +33,9 @@ methods:
 
 ### Initialization
 
-#### Numerical Suffix (Preferred)
+#### 💡 Numerical Suffix
+
+***Recommended***
 
 All `double` and `int` types have an extension `.big` that can be used to easily turn that value into a `BigDouble` instance:
 
@@ -48,7 +50,9 @@ internal structure. The first parameter is always the **mantissa** value, while 
 print((12.0, 3).big + (4, 10).big);
 ```
 
-#### String Parsing (Preferred)
+#### 💡 String Parsing
+
+***Recommended***
 
 `BigDouble.parse(String)` and `BigDouble.tryParse(String)` are useful for when the value is just now too large to represent with numerical literals. It is also paired with `toString()` method for easy back and forth serializing and deserializing. The format must follow the format of `{mantissa}e{exponent}`
 
@@ -82,9 +86,8 @@ Within every `BigDouble`, its value is represented by 2 values previously mentio
 
 You are able to **view** these values with just a `BigDouble`. **However, you are not allowed to directly modify the values.** This is due to the fact that directly modifying these values will cause the `BigDouble` to become not normalized leading to certain operations potentially producing incorrect results.
 
-> If you want to modify these values, you must use the `BigIntrospect` class.
->
-> This operation is highly unsafe.
+> [!CAUTION]
+> If you want to modify these values, you must use the `BigIntrospect` class, but keep in mind, you must manually normalize the `BigDouble` instance after.
 
 ```dart
 BigDouble a = 3.big;
@@ -97,7 +100,7 @@ BigIntrospect.changeExponent(a, 100); // GOOD
 
 There are additional helper functions for you to use that help you with additional computations. For example, the `pow(BigDouble, double)` function which raises a `BigDouble` to a certain power.
 
-_**Voilà!**_ For more information on additional usage, read the documentation [here]().
+🥳 _**Voilà!**_ For more information on additional usage, read the documentation [here]().
 
 ## Compatibility & Limitations
 
@@ -108,8 +111,8 @@ This library primarily operates to support both `native` and `web` platforms. Th
 >
 > From [dart-lang/sdk](https://github.com/dart-lang/sdk)
 
-However, the internal workings of this library depends on `int` and `double`, but the constraints of these [types varies between `web` and `native`](https://dart.dev/language/built-in-types#numbers) which can cause anomalies when building
-a program for both of these platforms. Therefore, when targetting `web`, this library will utilize constants defined with `double` in [lib/src/web/shared.dart](./lib/src/web/shared.dart). On the other hand, when targeting `native`, `int` (64 bit) constants from [lib/src/native/shared.dart](./lib/src/native/shared.dart) will be used.
+> [!WARNING]
+> However, the internal workings of this library depends on `int` and `double`, but the constraints of these [types varies between `web` and `native`](https://dart.dev/language/built-in-types#numbers) which can cause anomalies when building a program for both of these platforms. Therefore, when targetting `web`, this library will utilize constants defined with `double` in [lib/src/web/shared.dart](./lib/src/web/shared.dart). On the other hand, when targeting `native`, `int` (64 bit) constants from [lib/src/native/shared.dart](./lib/src/native/shared.dart) will be used.
 
 ## Acknowledgements
 
