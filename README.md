@@ -1,7 +1,7 @@
 # break_infinity.dart
 ![Tests](https://img.shields.io/github/actions/workflow/status/exoad/break_infinity.dart/test.yml?style=flat-square&label=tests%20status)
 
-`BigInt` and `double` replacement that can hold up to 1e9e15 for Dart.
+`BigInt` and `double` replacement that can hold up to 1e9e15 for Dart. The goal of this library is to focus on speed and memory footprint rather than accuracy especially when the value is very very large leading to traditional approaches like `BigInt` performing horribly. 
 
 Dart port of [Patashu/break_infinity.js](https://github.com/Patashu/break_infinity.js)
 
