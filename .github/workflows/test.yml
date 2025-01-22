@@ -32,7 +32,7 @@ jobs:
       - name: Analyze project source
         run: dart analyze --fatal-infos
       - name: Test
-        run: dart test -pnode --chain-stack-traces --reporter=failures-only --js-trace --file-reporter "json:test_results/reports_web.json"
+        run: dart test -pnode --chain-stack-traces --reporter=failures-only --file-reporter "json:test_results/reports_web.json"
       - name: Upload web test results
         uses: actions/upload-artifact@v3
         with:
