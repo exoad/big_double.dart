@@ -7,7 +7,7 @@ Dart port of [Patashu/break_infinity.js](https://github.com/Patashu/break_infini
 
 <a href="https://www.buymeacoffee.com/exoad" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="width:170px" ></a>
 
-## Usage
+## Installation
 Install the library
 
 ```bash
@@ -25,6 +25,77 @@ Import the library into your project
 ```dart
 import "package:break_infinity/break_infinity.dart";
 ```
+
+## Usage
+
+There are multiple ways to acquire a `BigDouble`. A `BigDouble` is the class that contains the value and can be constructed via multiple
+methods:
+
+### Initialization
+
+#### Numerical Suffix (Preferred)
+
+All `double` and `int` types have an extension `.big` that can be used to easily turn that value into a `BigDouble` instance:
+
+```dart
+print(1.big + 2.big);
+```
+
+Furthermore, there are also extension on 2 tuple types: `(int, int)` and `(double, int)` of which are represented by default for the `BigDouble`
+internal structure. The first parameter is always the **mantissa** value, while the second parameter is the **exponent** value.
+
+```dart
+print((12.0, 3).big + (4, 10).big);
+```
+
+#### String Parsing (Preferred)
+
+`BigDouble.parse(String)` and `BigDouble.tryParse(String)` are useful for when the value is just now too large to represent with numerical literals. It is also paired with `toString()` method for easy back and forth serializing and deserializing. The format must follow the format of `{mantissa}e{exponent}`
+
+> Additionally, the `tryParse` variant will return `BigDouble.nan` if parsing failed, while `parse` throws a `FormatException`.
+
+```dart
+print(BigDouble.parse("1e30"));
+```
+
+#### Direct Initialization with Constructor
+
+If you have your own method of storing the original value, then you can use this method to get the value back. The default constructor `BigDouble(double, int)` provides you with a way to supply the mantissa and exponent respectively.
+
+```dart
+print(BigDouble(1, 308)); // would be equivalent to saying 1e308
+```
+
+### Arithmetic
+
+All basic arithmetic operations are supported such as `+`, `-`, `*`, `/`, and `-` (negation) and all of which are handled through operator overloading:
+
+```dart
+print(1.big + 3.big); // 4.big
+```
+
+### Accessibility & Safety
+
+Within every `BigDouble`, its value is represented by 2 values previously mentioned:
+1. **Mantissa** - Contains the significant digits in the number. (*Significand*)
+2. **Exponent** - Represents the number of decimal places need to be moved.
+
+You are able to **view** these values with just a `BigDouble`. **However, you are not allowed to directly modify the values.** This is due to the fact that directly modifying these values will cause the `BigDouble` to become not normalized leading to certain operations potentially producing incorrect results.
+
+> If you want to modify these values, you must use the `BigIntrospect` class.
+>
+> This operation is highly unsafe.
+
+```dart
+BigDouble a = 3.big;
+print(a.mantissa); // GOOD
+a.exponent = 100;  // ERROR
+BigIntrospect.changeExponent(a, 100); // GOOD
+```
+
+### Math Library
+
+There are additional helper functions for you to use that help you with additional computations. For example, the `pow(BigDouble, double)` function which raises a `BigDouble` to a certain power.
 
 _**Voilà!**_ For more information on additional usage, read the documentation [here]().
 

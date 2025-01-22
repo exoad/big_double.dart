@@ -26,8 +26,8 @@ void main() {
     test("BigDouble.parse('1e30').toDouble() == 1e30", () {
       expect(BigDouble.parse("1e30"), 1e30.big);
     });
-    test("BigDouble.parse('1e30').toString() == 1.0e+30", () {
-      expect(BigDouble.parse("1e30").toString(), isJavaScript ? "1e+30" : "1.0e+30");
+    test("BigDouble.parse('1e30').toString() == 1.0e30", () {
+      expect(BigDouble.parse("1e30").toString(), isJavaScript ? "1e30" : "1.0e30");
     });
   });
   group("BigDouble Comparison Tests", () {
@@ -61,7 +61,7 @@ void main() {
       expect(pow(100.big, 10).toString(), 1e20.toString());
     });
     test("BigDouble(300) ^ 300 == 1.368e743", () {
-      expect(pow(300.big, 300).toString(), "1.368914790585681e+743");
+      expect(pow(300.big, 300).toString(), "1.368914790585681e743");
     });
   });
   group("BigDouble.floor", () {
@@ -106,6 +106,6 @@ void main() {
         expect(BigDouble.random().isNegativeInfinity, false);
       });
     }
-   
+
   });
 }

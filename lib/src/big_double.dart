@@ -104,7 +104,7 @@ BigDouble pow10(double power, double tolerance) {
       : _normalize(dart_math.pow(10, residual).toDouble(), v);
 }
 
-/// Raises a BigDouble [value] to [power] (ie [value] ^ [power])
+/// Raises a BigDouble [value] to [power] (ie [value] ^ [power]). Exponentiation
 BigDouble pow(BigDouble value, double power, [double? tolerance]) {
   if (value.mantissa.isZero) {
     return power.isZero ? BigDouble.one : value;
@@ -162,8 +162,8 @@ final class BigIntrospect {
 /// performance (10-1000x) with a "good enough estimation". For this reason, it is very useful for creating incremental games or other quantities that do not need high accuracies at large magnitudes.
 class BigDouble implements Comparable<BigDouble> {
   /// Whether to use the `+` sign for positive numbers in [toString]
-  /// By default it is `true`
-  static bool _usePositiveExpSign = true;
+  /// By default it is `false`
+  static bool _usePositiveExpSign = false;
 
   /// Whether to use the `+` sign for positive numbers in [toString]
   /// By default it is `true`
