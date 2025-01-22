@@ -1,8 +1,3 @@
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-
 name: run tests
 
 on:
@@ -21,44 +16,46 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-      - uses: dart-lang/setup-dart@9a04e6d73cca37bd455e0608d7e5092f881fd603
+      - uses: dart-lang/setup-dart@v1
       - name: Install dependencies
         run: dart pub get
       - name: Analyze project source
         run: dart analyze --fatal-infos
 
-  web:
-    name: Run web (nodejs)
+  tests:
+    name: Run Tests
     needs: gather
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        target: [web, native]
     steps:
-      - name: Run web tests
-        id: run_web_tests
+      - uses: actions/checkout@v4
+      - uses: dart-lang/setup-dart@v1
+      - name: Run ${{ matrix.target }} tests
         run: |
-          web_test=$(dart test -pnode --chain-stack-traces --failures-only --js-trace --file-reporter "json:test_results/reports_web.json")
-          echo "web_test=$web_test" >> $GITHUB_ENV
-
-  native:
-    name: Run native (kernel)
-    needs: gather
-    runs-on: ubuntu-latest
-    steps:
-      - name: Run native tests
-        id: run_native_tests
-        run: |
-          native_test=$(dart test --chain-stack-traces --failures-only --file-reporter "json:test_results/reports_native.json")
-          echo "native_test=$native_test" >> $GITHUB_ENV
+          if [ "${{ matrix.target }}" == "web" ]; then
+            dart test -pnode --chain-stack-traces --failures-only --js-trace --file-reporter "json:test_results/reports_web.json";
+          else
+            dart test --chain-stack-traces --failures-only --file-reporter "json:test_results/reports_native.json";
+          fi
 
   summarize:
     name: Upload results
-    needs: 
-      - web
-      - native
+    needs: tests
     runs-on: ubuntu-latest
     steps:
       - name: Write workflow summary
         run: |
           echo "##Web" >> $GITHUB_STEP_SUMMARY
-          echo "$web_test" >> $GITHUB_STEP_SUMMARY
+          if [ -f test_results/reports_web.json ]; then
+            cat test_results/reports_web.json >> $GITHUB_STEP_SUMMARY
+          else
+            echo "Web test results not found." >> $GITHUB_STEP_SUMMARY
+          fi
           echo "##Native" >> $GITHUB_STEP_SUMMARY
-          echo "$native_test" >> $GITHUB_STEP_SUMMARY
+          if [ -f test_results/reports_native.json ]; then
+            cat test_results/reports_native.json >> $GITHUB_STEP_SUMMARY
+          else
+            echo "Native test results not found." >> $GITHUB_STEP_SUMMARY
+          fi
