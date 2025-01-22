@@ -30,8 +30,6 @@ _**Voilà!**_ For more information on additional usage, read the documentation [
 
 ## Compatibility & Limitations
 
-**See [#1](https://github.com/exoad/break_infinity.dart/issues/1)**
-
 This library primarily operates to support both `native` and `web` platforms. These platforms are as follows
 
 > * **Dart Native**: For programs targeting devices (mobile, desktop, server, and more), Dart Native includes both a Dart VM with JIT (just-in-time) compilation and an AOT (ahead-of-time) compiler for producing machine code.
