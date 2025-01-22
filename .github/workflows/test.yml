@@ -21,6 +21,7 @@ jobs:
         run: dart pub get
       - name: Analyze project source
         run: dart analyze --fatal-infos
+
   tests:
     name: Run Tests
     needs: gather
@@ -33,23 +34,27 @@ jobs:
       - uses: dart-lang/setup-dart@v1
       - name: Run ${{ matrix.target }} tests
         run: |
+          mkdir -p test_results
           if [ "${{ matrix.target }}" == "web" ]; then
             dart test -pnode --chain-stack-traces --reporter=failures-only --js-trace --file-reporter "json:test_results/reports_web.json";
           else
             dart test --chain-stack-traces --reporter=failures-only --file-reporter "json:test_results/reports_native.json";
           fi
       - name: Upload test results
+        if: ${{ success() || failure() }}
         uses: actions/upload-artifact@v3
         with:
           name: test-results-${{ matrix.target }}
           path: test_results
           retention-days: 3
+
   summarize:
-    name: Upload results
+    name: Upload results summary
     needs: tests
     runs-on: ubuntu-latest
     steps:
       - name: Write workflow summary
+        if: ${{ success() || failure() }}
         run: |
           echo "##Web" >> $GITHUB_STEP_SUMMARY
           if [ -f test_results/reports_web.json ]; then
@@ -63,3 +68,10 @@ jobs:
           else
             echo "Native test results not found." >> $GITHUB_STEP_SUMMARY
           fi
+      - name: Upload test_results directory
+        if: ${{ success() || failure() }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: all-test-results
+          path: test_results
+          retention-days: 3
