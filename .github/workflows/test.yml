@@ -10,8 +10,18 @@ on:
   workflow_dispatch:
 
 jobs:
-  gather:
-    name: Gather dependencies
+  initial_prechecks:
+    name: Prechecks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dart-lang/setup-dart@v1
+      - name: Analyze Source
+        run: |
+          dart pub get
+          dart analyze --fatal-infos
+  web:
+    name: Run Web Tests (NodeJS)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -21,58 +31,29 @@ jobs:
         run: dart pub get
       - name: Analyze project source
         run: dart analyze --fatal-infos
-
-  tests:
-    name: Run Tests
-    needs: gather
+      - name: Test
+        run: dart test -pnode --chain-stack-traces --reporter=failures-only --js-trace --file-reporter "json:test_results/reports_web.json"
+      - name: Upload web test results
+        uses: actions/upload-artifact@v3
+        with:
+          name: WebTestResults
+          path: test_results/reports_web.json
+          retention-days: 3
+  native:
+    name: Run Native Tests
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        target: [web, native]
     steps:
       - uses: actions/checkout@v4
       - uses: dart-lang/setup-dart@v1
-      - name: Run ${{ matrix.target }} tests
-        run: |
-          mkdir -p test_results
-          if [ "${{ matrix.target }}" == "web" ]; then
-            dart test -pnode --chain-stack-traces --reporter=failures-only --js-trace --file-reporter "json:test_results/reports_web.json";
-          else
-            dart test --chain-stack-traces --reporter=failures-only --file-reporter "json:test_results/reports_native.json";
-          fi
-          continue-on-error: true
-      - name: Upload test results
-        if: ${{ success() || failure() }}
+      - name: Install dependencies
+        run: dart pub get
+      - name: Analyze project source
+        run: dart analyze --fatal-infos
+      - name: Test
+        run: dart test --chain-stack-traces --reporter=failures-only --file-reporter "json:test_results/reports_native.json"
+      - name: Upload native test results
         uses: actions/upload-artifact@v3
         with:
-          name: test-results-${{ matrix.target }}
-          path: test_results
-          retention-days: 3
-
-  summarize:
-    name: Upload results summary
-    needs: tests
-    runs-on: ubuntu-latest
-    steps:
-      - name: Write workflow summary
-        if: ${{ success() || failure() }}
-        run: |
-          echo "##Web" >> $GITHUB_STEP_SUMMARY
-          if [ -f test_results/reports_web.json ]; then
-            cat test_results/reports_web.json >> $GITHUB_STEP_SUMMARY
-          else
-            echo "Web test results not found." >> $GITHUB_STEP_SUMMARY
-          fi
-          echo "##Native" >> $GITHUB_STEP_SUMMARY
-          if [ -f test_results/reports_native.json ]; then
-            cat test_results/reports_native.json >> $GITHUB_STEP_SUMMARY
-          else
-            echo "Native test results not found." >> $GITHUB_STEP_SUMMARY
-          fi
-      - name: Upload test_results directory
-        if: ${{ success() || failure() }}
-        uses: actions/upload-artifact@v3
-        with:
-          name: all-test-results
-          path: test_results
+          name: NativeTestResults
+          path: test_results/reports_native.json
           retention-days: 3
