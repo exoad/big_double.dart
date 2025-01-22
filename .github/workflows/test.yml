@@ -26,23 +26,39 @@ jobs:
         run: dart pub get
       - name: Analyze project source
         run: dart analyze --fatal-infos
+
   web:
     name: Run web (nodejs)
     needs: gather
     runs-on: ubuntu-latest
     steps:
       - name: Run web tests
-        run: web_test=$(dart test -pnode --chain-stack-traces --failures-only --js-trace --file-reporter "json:test_results/reports_web.json")
+        id: run_web_tests
+        run: |
+          web_test=$(dart test -pnode --chain-stack-traces --failures-only --js-trace --file-reporter "json:test_results/reports_web.json")
+          echo "web_test=$web_test" >> $GITHUB_ENV
+
   native:
     name: Run native (kernel)
+    needs: gather
     runs-on: ubuntu-latest
     steps:
       - name: Run native tests
-        run: native_test=$(dart test --chain-stack-traces --failures-only --file-reporter "json:test_results/reports_native.json")
+        id: run_native_tests
+        run: |
+          native_test=$(dart test --chain-stack-traces --failures-only --file-reporter "json:test_results/reports_native.json")
+          echo "native_test=$native_test" >> $GITHUB_ENV
+
   summarize:
     name: Upload results
+    needs: 
+      - web
+      - native
     runs-on: ubuntu-latest
     steps:
       - name: Write workflow summary
         run: |
-          SUMMARY=```##Web\n$web_test\n##Native\n$native_test```
+          echo "##Web" >> $GITHUB_STEP_SUMMARY
+          echo "$web_test" >> $GITHUB_STEP_SUMMARY
+          echo "##Native" >> $GITHUB_STEP_SUMMARY
+          echo "$native_test" >> $GITHUB_STEP_SUMMARY
