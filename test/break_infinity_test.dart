@@ -27,7 +27,7 @@ void main() {
       expect(BigDouble.parse("1e30"), 1e30.big);
     });
     test("BigDouble.parse('1e30').toString() == 1.0e+30", () {
-      expect(BigDouble.parse("1e30").toString(), "1.0e+30");
+      expect(BigDouble.parse("1e30").toString(), isJavaScript ? "1e+30" : "1.0e+30");
     });
   });
   group("BigDouble Comparison Tests", () {
