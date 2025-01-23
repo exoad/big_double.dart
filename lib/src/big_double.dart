@@ -66,6 +66,38 @@ BigDouble max(BigDouble a, BigDouble b) {
           : b;
 }
 
+/// The hyperbolic "inverse" sine function
+double asinh(BigDouble value) {
+  return log(value + sqrt((sqrt(value) + BigDouble.one)));
+}
+
+/// The hyperbolic "inverse" cosine function
+double acosh(BigDouble value) {
+  return log((value + BigDouble.one) / (BigDouble.one / value)) / 2;
+}
+
+/// The hyperbolic "inverse" tangent function
+double atanh(BigDouble value) {
+  return value.abs() >= BigDouble.one
+      ? double.nan
+      : log((value + BigDouble.one) / (BigDouble.one - value)) / 2;
+}
+
+/// The hyperbolic sine function using [angle]
+BigDouble sinh(BigDouble angle) {
+  return (exp(angle) - exp(-angle)) / 2.big;
+}
+
+/// The hyperbolic cosine function using [angle]
+BigDouble cosh(BigDouble angle) {
+  return (exp(angle) + exp(-angle)) / 2.big;
+}
+
+/// The hyperbolic tangent function using [angle]
+BigDouble tanh(BigDouble angle) {
+  return sinh(angle) / cosh(angle);
+}
+
 /// Returns the min of two [BigDouble] instances.
 BigDouble min(BigDouble a, BigDouble b) {
   return a.isNaN || b.isNaN
@@ -73,6 +105,14 @@ BigDouble min(BigDouble a, BigDouble b) {
       : a > b
           ? b
           : a;
+}
+
+/// Euler's number `e` raised to the power of [value]
+BigDouble exp(BigDouble value) {
+  double x = value.toDouble();
+  return -706 < x && x < 709
+      ? BigDouble.fromValue(dart_math.exp(x))
+      : powBig(BigDouble.fromValue(dart_math.e), value);
 }
 
 /// Performs a square root on the [BigDouble] instance.
@@ -91,15 +131,20 @@ double log10(BigDouble value) {
   return value.exponent * CasualNumerics.log10(value.mantissa);
 }
 
+double log2(BigDouble value) {
+  return 3.32192809488736234787 * log10(value);
+}
+
 /// Returns the log of [value]
 double log(BigDouble value) {
   return 2.302585092994046 * log10(value);
 }
 
-BigDouble pow10(double power, double tolerance) {
+/// COmputes 10^power with tolerance
+BigDouble pow10(double power, [double? tolerance]) {
   int v = power.toInt();
   double residual = power - v;
-  return residual.abs() < tolerance
+  return residual.abs() < (tolerance ?? roundTolerance)
       ? BigDouble._noNormalize(1, v)
       : _normalize(dart_math.pow(10, residual).toDouble(), v);
 }
@@ -134,6 +179,11 @@ BigDouble pow(BigDouble value, double power, [double? tolerance]) {
       power * (value.exponent + CasualNumerics.log10(value.mantissa.abs())),
       (tolerance ?? roundTolerance));
   return value.sign == -1 && power % 2 == 1 ? -res : res;
+}
+
+/// Similar to [pow] but you can use another [BigDouble] as the power. Internally delegates to [pow]
+BigDouble powBig(BigDouble value, BigDouble power, [double? tolerance]) {
+  return pow(value, power.toDouble(), tolerance);
 }
 
 /// For altering the mantissa and exponent values within [BigDouble]. BigDouble by itself
@@ -453,6 +503,21 @@ class BigDouble implements Comparable<BigDouble> {
                 : "${_mantissa}e${_exponent >= 0 ? (_usePositiveExpSign ? "+" : "") : "-"}$_exponent";
   }
 
+  /// Returns a string representation of this [BigDouble] formatted with number of [places] after the decimal point.
+  String toFixedString(int places) {
+    if (places < 0) {
+      places = maxSignificantDigits;
+    } else if (_exponent <= expLimit || _mantissa == 0) {
+      return "0${places > 0 ? '.'.padRight(places, '0') : ''}";
+    } else if (_exponent >= maxSignificantDigits) {
+      String out = _mantissa.toString().replaceAll(".", "");
+      out = "${out.padRight(_exponent + 1)}${places > 0 ? '.'.padRight(places + 1) : ''}";
+    }
+    int mult = dart_math.pow(10, places).toInt();
+    return ((toDouble() * mult).roundToDouble() / mult.toDouble())
+        .toStringAsFixed(places);
+  }
+
   @override
   int get hashCode => (_mantissa.hashCode * 397) ^ _exponent.hashCode;
 
@@ -475,6 +540,24 @@ class BigDouble implements Comparable<BigDouble> {
     }
     double rounded = res.roundToDouble();
     return (rounded - res).abs() < (tolerance ?? roundTolerance) ? rounded : res;
+  }
+
+  /// Discards any fractional values from `this`
+  BigDouble truncate() {
+    return _exponent < 0
+        ? zero
+        : _exponent < maxSignificantDigits
+            ? BigDouble.fromValue(toDouble().truncateToDouble())
+            : this;
+  }
+
+  /// Returns a [BigDouble] with an integer value closest `this`
+  BigDouble round() {
+    return _exponent < 0
+        ? zero
+        : _exponent < maxSignificantDigits
+            ? BigDouble.fromValue(toDouble().roundToDouble())
+            : this;
   }
 }
 
