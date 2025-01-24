@@ -66,21 +66,75 @@ BigDouble max(BigDouble a, BigDouble b) {
           : b;
 }
 
+/// Computes the arcsine (inverse sine) of [value] and returns in radians.
+BigDouble asin(BigDouble value) {
+  return value._mantissa.isNegative
+      ? value
+      : value._exponent == 0
+          ? dart_math.asin(value.sign * value.mantissa).big
+          : BigDouble.nan;
+}
+
+/// Computes the arcosine (inverse cosine) of [value] and returns in radians.
+BigDouble acos(BigDouble value) {
+  return value.mantissa < 0
+      ? dart_math.acos(value.toDouble()).big
+      : value.exponent == 0
+          ? dart_math.acos(value.sign * value.mantissa).big
+          : BigDouble.nan;
+}
+
+/// Computes the arctangent (inverse tangent) of [value] and returns in radians.
+BigDouble atan(BigDouble value) {
+  return value.mantissa < 0
+      ? value
+      : value.exponent == 0
+          ? dart_math.atan(value.sign * value.mantissa).big
+          : dart_math.atan(value.sign * 1.8e308).big;
+}
+
+/// Computes the tangent of [value] in radians.
+BigDouble tan(BigDouble value) {
+  return value.mantissa < 0
+      ? value
+      : value.exponent == 0
+          ? dart_math.tan(value.sign * value.mantissa).big
+          : BigDouble.zero;
+}
+
+/// Computes the cosine of [value] in radians.
+BigDouble cos(BigDouble value) {
+  return value.mantissa < 0
+      ? BigDouble.one
+      : value.exponent == 0
+          ? dart_math.cos(value.sign * value.mantissa).big
+          : BigDouble.zero;
+}
+
+/// Computes the sine of [value] in radians.
+BigDouble sin(BigDouble value) {
+  return value.mantissa < 0
+      ? value
+      : value.exponent == 0
+          ? dart_math.sin(value.sign * value.mantissa).big
+          : BigDouble.zero;
+}
+
 /// The hyperbolic "inverse" sine function
-double asinh(BigDouble value) {
+BigDouble asinh(BigDouble value) {
   return log(value + sqrt((sqrt(value) + BigDouble.one)));
 }
 
 /// The hyperbolic "inverse" cosine function
-double acosh(BigDouble value) {
-  return log((value + BigDouble.one) / (BigDouble.one / value)) / 2;
+BigDouble acosh(BigDouble value) {
+  return log((value + BigDouble.one) / (BigDouble.one / value)) / 2.big;
 }
 
 /// The hyperbolic "inverse" tangent function
-double atanh(BigDouble value) {
+BigDouble atanh(BigDouble value) {
   return value.abs() >= BigDouble.one
-      ? double.nan
-      : log((value + BigDouble.one) / (BigDouble.one - value)) / 2;
+      ? BigDouble.nan
+      : log((value + BigDouble.one) / (BigDouble.one - value)) / 2.big;
 }
 
 /// The hyperbolic sine function using [angle]
@@ -127,17 +181,17 @@ BigDouble sqrt(BigDouble value) {
 }
 
 /// Log base 10. Utilizes a vary rough calculation from [CasualNumerics]
-double log10(BigDouble value) {
-  return value.exponent * CasualNumerics.log10(value.mantissa);
+BigDouble log10(BigDouble value) {
+  return value.exponent.big * CasualNumerics.log10(value.mantissa).big;
 }
 
-double log2(BigDouble value) {
-  return 3.32192809488736234787 * log10(value);
+BigDouble log2(BigDouble value) {
+  return 3.32192809488736234787.big * log10(value);
 }
 
 /// Returns the log of [value]
-double log(BigDouble value) {
-  return 2.302585092994046 * log10(value);
+BigDouble log(BigDouble value) {
+  return 2.302585092994046.big * log10(value);
 }
 
 /// COmputes 10^power with tolerance

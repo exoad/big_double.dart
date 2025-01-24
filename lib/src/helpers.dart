@@ -30,4 +30,9 @@ class CasualNumerics {
         ? x > -9007199254740991 && x < 9007199254740991 && x.floor() == x
         : x.isZero;
   }
+
+  /// Returns whether [a] and [b] are within 
+  static bool isEquatable(double a, double b, {double tolerance = roundTolerance}) {
+    return (a - b).abs() < tolerance;
+  }
 }

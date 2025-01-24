@@ -15,7 +15,7 @@ const int numberExpMax = 308;
 const int numberExpMin = -324;
 
 /// Tolerance which is used for Number conversion to compensate floating-point error.
-final double roundTolerance = 1e-10;
+const double roundTolerance = 1e-10;
 
 final BigDouble roundToleranceForm = BigDouble(1, -10);
 
