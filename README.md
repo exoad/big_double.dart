@@ -43,7 +43,7 @@ All `double` and `int` types have an extension `.big` that can be used to easily
 print(1.big + 2.big);
 ```
 
-Furthermore, there are also extension on 2 tuple types: `(int, int)` and `(double, int)` of which are represented by default for the `BigDouble`
+Furthermore, there are also extensions on 2 tuple types: `(int, int)` and `(double, int)` which are represented by default for the `BigDouble`
 internal structure. The first parameter is always the **mantissa** value, while the second parameter is the **exponent** value.
 
 ```dart
@@ -54,7 +54,7 @@ print((12.0, 3).big + (4, 10).big);
 
 ***Recommended***
 
-`BigDouble.parse(String)` and `BigDouble.tryParse(String)` are useful for when the value is just now too large to represent with numerical literals. It is also paired with `toString()` method for easy back and forth serializing and deserializing. The format must follow the format of `{mantissa}e{exponent}`
+`BigDouble.parse(String)` and `BigDouble.tryParse(String)` are useful when the value is just now too large to represent with numerical literals. It is also paired with the `toString()` method for easy back-and-forth serializing and deserializing. The format must follow the format of `{mantissa}e{exponent}`
 
 > Additionally, the `tryParse` variant will return `BigDouble.nan` if parsing failed, while `parse` throws a `FormatException`.
 
@@ -64,7 +64,7 @@ print(BigDouble.parse("1e30"));
 
 #### Direct Initialization with Constructor
 
-If you have your own method of storing the original value, then you can use this method to get the value back. The default constructor `BigDouble(double, int)` provides you with a way to supply the mantissa and exponent respectively.
+If you have your method of storing the original value, then you can use this method to get the value back. The default constructor `BigDouble(double, int)` provides you with a way to supply the mantissa and exponent respectively.
 
 ```dart
 print(BigDouble(1, 308)); // would be equivalent to saying 1e308
@@ -82,23 +82,24 @@ print(1.big + 3.big); // 4.big
 
 Within every `BigDouble`, its value is represented by 2 values previously mentioned:
 1. **Mantissa** - Contains the significant digits in the number. (*Significand*)
-2. **Exponent** - Represents the number of decimal places need to be moved.
+2. **Exponent** - Represents the number of decimal places that need to be moved.
 
-You are able to **view** these values with just a `BigDouble`. **However, you are not allowed to directly modify the values.** This is due to the fact that directly modifying these values will cause the `BigDouble` to become not normalized leading to certain operations potentially producing incorrect results.
+You can **view** these values with just a `BigDouble`. **However, you are not allowed to directly modify the values.** This is because directly modifying these values will cause the `BigDouble` to become not normalized leading to certain operations potentially producing incorrect results.
 
 > [!CAUTION]
-> If you want to modify these values, you must use the `BigIntrospect` class, but keep in mind, you must manually normalize the `BigDouble` instance after.
+> If you want to modify these values, you must use the `BigIntrospect` class, but keep in mind, that you must manually normalize the `BigDouble` instance after.
 
 ```dart
 BigDouble a = 3.big;
-print(a.mantissa); // GOOD
+print(a.mantissa); // OK
 a.exponent = 100;  // ERROR
-BigIntrospect.changeExponent(a, 100); // GOOD
+BigIntrospect.changeExponent(a, 100); // OK
 ```
 
 ### Math Library
 
-There are additional helper functions for you to use that help you with additional computations. For example, the `pow(BigDouble, double)` function which raises a `BigDouble` to a certain power.
+There are additional helper functions for you to use that help you with additional computations. For example, the `pow(BigDouble, double)` function which raises a `BigDouble` to a certain power. All of the function styles have been adapted from Dart's format such as how a double has `.abs()` which will make utilizing
+a `BigDouble` just like using vanilla Dart!
 
 🥳 _**Voilà!**_ For more information on additional usage, read the documentation [here]().
 
@@ -112,7 +113,7 @@ This library primarily operates to support both `native` and `web` platforms. Th
 > From [dart-lang/sdk](https://github.com/dart-lang/sdk)
 
 > [!WARNING]
-> However, the internal workings of this library depends on `int` and `double`, but the constraints of these [types varies between `web` and `native`](https://dart.dev/language/built-in-types#numbers) which can cause anomalies when building a program for both of these platforms. Therefore, when targetting `web`, this library will utilize constants defined with `double` in [lib/src/web/shared.dart](./lib/src/web/shared.dart). On the other hand, when targeting `native`, `int` (64 bit) constants from [lib/src/native/shared.dart](./lib/src/native/shared.dart) will be used.
+> However, the internal workings of this library depend on `int` and `double`, but the constraints of these [types vary between `web` and `native`](https://dart.dev/language/built-in-types#numbers) which can cause anomalies when building a program for both of these platforms. Therefore, when targetting `web`, this library will utilize constants defined with `double` in [lib/src/web/shared.dart](./lib/src/web/shared.dart). On the other hand, when targeting `native`, `int` (64-bit) constants from [lib/src/native/shared.dart](./lib/src/native/shared.dart) will be used.
 
 ## Acknowledgements
 
