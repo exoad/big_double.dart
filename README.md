@@ -113,8 +113,9 @@ This library primarily operates to support both `native` and `web` platforms. Th
 > From [dart-lang/sdk](https://github.com/dart-lang/sdk)
 
 > [!WARNING]
-> However, the internal workings of this library depend on `int` and `double`, but the constraints of these [types vary between `web` and `native`](https://dart.dev/language/built-in-types#numbers) which can cause anomalies when building a program for both of these platforms. Therefore, when targetting `web`, this library will utilize constants defined with `double` in [lib/src/web/shared.dart](./lib/src/web/shared.dart). On the other hand, when targeting `native`, `int` (64-bit) constants from [lib/src/native/shared.dart](./lib/src/native/shared.dart) will be used.
-
+> However, the internal workings of this library depend on `int` and `double`, but the constraints of these [types vary between `web` and `native`](https://dart.dev/language/built-in-types#numbers) which will need to be taken into consideration when using this package, but for the most part, a lot of the constraints have been solved
+> within this library itself.
+ 
 ## Acknowledgements
 
 ### [Patashu/break_infinity.js](https://github.com/Patashu/break_infinity.js)
