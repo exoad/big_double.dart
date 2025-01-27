@@ -1,4 +1,4 @@
-# big_double
+# big_double.dart
 ![Tests](https://img.shields.io/github/actions/workflow/status/exoad/big_double/test.yml?style=flat-square&label=tests%20status)
 
 `BigInt` and `double` replacement that can hold up to $10^{10^{308}}$ for Dart. The goal of this library is to focus on speed and memory footprint rather than accuracy especially when the value is very very large leading to traditional approaches like `BigInt` performing horribly.
