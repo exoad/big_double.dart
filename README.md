@@ -1,9 +1,7 @@
-# break_infinity.dart
-![Tests](https://img.shields.io/github/actions/workflow/status/exoad/break_infinity.dart/test.yml?style=flat-square&label=tests%20status)
+# big_double
+![Tests](https://img.shields.io/github/actions/workflow/status/exoad/big_double/test.yml?style=flat-square&label=tests%20status)
 
-`BigInt` and `double` replacement that can hold up to 1e9e15 for Dart. The goal of this library is to focus on speed and memory footprint rather than accuracy especially when the value is very very large leading to traditional approaches like `BigInt` performing horribly. 
-
-Dart port of [Patashu/break_infinity.js](https://github.com/Patashu/break_infinity.js)
+`BigInt` and `double` replacement that can hold up to 10^10^308 for Dart. The goal of this library is to focus on speed and memory footprint rather than accuracy especially when the value is very very large leading to traditional approaches like `BigInt` performing horribly. 
 
 <a href="https://www.buymeacoffee.com/exoad" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="width:170px" ></a>
 
@@ -26,7 +24,7 @@ Import the library into your project
 import "package:break_infinity/break_infinity.dart";
 ```
 
-## Usage
+## Using a BIG double
 
 There are multiple ways to acquire a `BigDouble`. A `BigDouble` is the class that contains the value and can be constructed via multiple
 methods:
@@ -119,10 +117,10 @@ This library primarily operates to support both `native` and `web` platforms. Th
 ## Acknowledgements
 
 ### [Patashu/break_infinity.js](https://github.com/Patashu/break_infinity.js)
-The original implementation
 
 ### [AD417/BreakInfinity.java](https://github.com/AD417/BreakInfinity.java)
-Java port which helped porting it to Dart :)
+
+### [Patashu/break_eternity.js](https://github.com/Patashu/break_eternity.js)
 
 ### Contributors
 
