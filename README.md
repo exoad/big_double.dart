@@ -1,7 +1,7 @@
 # big_double
 ![Tests](https://img.shields.io/github/actions/workflow/status/exoad/big_double/test.yml?style=flat-square&label=tests%20status)
 
-`BigInt` and `double` replacement that can hold up to $10^{10^{308}}$ for Dart. The goal of this library is to focus on speed and memory footprint rather than accuracy especially when the value is very very large leading to traditional approaches like `BigInt` performing horribly. 
+`BigInt` and `double` replacement that can hold up to $10^{10^{308}}$ for Dart. The goal of this library is to focus on speed and memory footprint rather than accuracy especially when the value is very very large leading to traditional approaches like `BigInt` performing horribly.
 
 <a href="https://www.buymeacoffee.com/exoad" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="width:170px" ></a>
 
@@ -9,19 +9,19 @@
 Install the library
 
 ```bash
-dart pub add break_infinity
+dart pub add big_double
 ```
 
 or
 
 ```bash
-flutter pub add break_infinity
+flutter pub add big_double
 ```
 
 Import the library into your project
 
 ```dart
-import "package:break_infinity/break_infinity.dart";
+import "package:big_double/big_double.dart";
 ```
 
 ## Using a BIG double
@@ -113,10 +113,10 @@ This library primarily operates to support both `native` and `web` platforms. Th
 > [!WARNING]
 > However, the internal workings of this library depend on `int` and `double`, but the constraints of these [types vary between `web` and `native`](https://dart.dev/language/built-in-types#numbers) which will need to be taken into consideration when using this package, but for the most part, a lot of the constraints have been solved
 > within this library itself.
- 
+
 ## Acknowledgements
 
-### [Patashu/break_infinity.js](https://github.com/Patashu/break_infinity.js)
+### [Patashu/big_double.js](https://github.com/Patashu/big_double.js)
 
 ### [AD417/BreakInfinity.java](https://github.com/AD417/BreakInfinity.java)
 
@@ -124,6 +124,6 @@ This library primarily operates to support both `native` and `web` platforms. Th
 
 ### Contributors
 
-<a href="https://github.com/exoad/break_infinity.dart/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=exoad/break_infinity.dart" />
+<a href="https://github.com/exoad/big_double.dart/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=exoad/big_double.dart" />
 </a>

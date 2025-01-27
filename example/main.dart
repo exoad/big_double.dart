@@ -1,4 +1,4 @@
-import 'package:break_infinity/break_infinity.dart';
+import 'package:big_double/big_double.dart';
 
 void main() {
   BigDouble sum = (1e30).big + (1e30).big;

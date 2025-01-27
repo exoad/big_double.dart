@@ -1,5 +1,5 @@
-import 'package:break_infinity/break_infinity.dart';
-import 'package:break_infinity/src/helpers.dart';
+import 'package:big_double/big_double.dart';
+import 'package:big_double/src/helpers.dart';
 
 /// For example: if two exponents are more than 17 apart,
 /// consider adding them together pointless, just return the larger one

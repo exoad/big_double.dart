@@ -1,6 +1,6 @@
-import "package:break_infinity/break_infinity.dart";
-import "package:break_infinity/src/helpers.dart";
-import "package:break_infinity/src/powers_of_10.dart";
+import "package:big_double/big_double.dart";
+import "package:big_double/src/helpers.dart";
+import "package:big_double/src/powers_of_10.dart";
 import "package:test/test.dart";
 
 void main() {

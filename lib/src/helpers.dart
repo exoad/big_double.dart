@@ -1,8 +1,8 @@
 import 'dart:math' as dart_math;
 
-import 'package:break_infinity/src/shared.dart';
+import 'package:big_double/src/shared.dart';
 
-export "package:break_infinity/src/shared.dart";
+export "package:big_double/src/shared.dart";
 
 /// Reports whether whatever application is bundled is running via the JavaScript runtime.
 bool get isJavaScript => identical(1.0, 1);
@@ -31,7 +31,7 @@ class CasualNumerics {
         : x.isZero;
   }
 
-  /// Returns whether [a] and [b] are within 
+  /// Returns whether [a] and [b] are within
   static bool isEquatable(double a, double b, {double tolerance = roundTolerance}) {
     return (a - b).abs() < tolerance;
   }

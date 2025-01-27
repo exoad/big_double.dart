@@ -1,7 +1,7 @@
 import 'dart:math' as dart_math;
 
-import 'package:break_infinity/src/powers_of_10.dart';
-import 'package:break_infinity/src/helpers.dart';
+import 'package:big_double/src/powers_of_10.dart';
+import 'package:big_double/src/helpers.dart';
 
 /// A simplified version of using [BigDouble] by just calling a simple getter
 /// methods [IntBigDoublify.big]
@@ -259,8 +259,8 @@ final class BigIntrospect {
   }
 }
 
-/// The break_infinity implementation in Dart. This is capable of exceeding 1e308 and is based
-/// on Patashu's break_infinity.js implementation. https://patashu.github.io/break_infinity.js/index.html
+/// The big_double implementation in Dart. This is capable of exceeding 1e308 and is based
+/// on Patashu's big_double.js implementation. https://patashu.github.io/big_double.js/index.html
 /// As compared to Dart's own [BigInt] which sacrifices speed and performance over time
 /// for accuracy, [BigDouble] focuses on sacrificing accuracy over time for far better
 /// performance (10-1000x) with a "good enough estimation". For this reason, it is very useful for creating incremental games or other quantities that do not need high accuracies at large magnitudes.
