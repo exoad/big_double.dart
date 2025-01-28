@@ -29,6 +29,12 @@ void main() {
     test("BigDouble.parse('1e30').toString() == 1.0e30", () {
       expect(BigDouble.parse("1e30").toString(), isJavaScript ? "1e30" : "1.0e30");
     });
+    test("BigDouble.parse('30e5000') == (30,5000).big", () {
+      expect("30e5000".parseBigDouble == (30, 5000).big, true);
+    });
+    test("3e80.zeroes == 80", () {
+      expect("3e80".parseBigDouble.toFixedString(0).substring(1).length == 80, true);
+    });
   });
   group("BigDouble Comparison Tests", () {
     test("BigDouble.fromValue(34) != BigDouble.fromValue(10)", () {
@@ -106,6 +112,5 @@ void main() {
         expect(BigDouble.random().isNegativeInfinity, false);
       });
     }
-
   });
 }

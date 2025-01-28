@@ -36,3 +36,23 @@ class CasualNumerics {
     return (a - b).abs() < tolerance;
   }
 }
+
+final class ZeroStringInterner {
+  ZeroStringInterner._();
+
+  static final Map<int, String> _cache = <int, String>{};
+
+  static String poke(int counts) {
+    if (counts <= 0) {
+      return "";
+    } else if (!_cache.containsKey(counts)) {
+      _cache[counts] = "0" * counts;
+      return _cache[counts]!;
+    }
+    return _cache[counts]!;
+  }
+}
+
+String trailZeroes(int places) {
+  return places > 0 ? "." + ZeroStringInterner.poke(places) : "";
+}
