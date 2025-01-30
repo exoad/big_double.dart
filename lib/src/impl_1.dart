@@ -125,9 +125,9 @@ double ln(BigDouble value) {
 }
 
 /// Computes 10^power with tolerance
-BigDouble pow10(double power, [double? tolerance]) {
+BigDouble pow10(num power, [double? tolerance]) {
   int v = power.toInt();
-  double residual = power - v;
+  double residual = power.toDouble() - v;
   return residual.abs() < (tolerance ?? roundTolerance)
       ? BigDouble._noNormalize(1, v)
       : _normalize(dart_math.pow(10, residual).toDouble(), v);
@@ -135,38 +135,40 @@ BigDouble pow10(double power, [double? tolerance]) {
 
 /// Raises a BigDouble [value] to [power] (ie [value] ^ [t]). Exponentiation
 BigDouble pow(BigDouble value, dynamic t, [double? tolerance]) {
-  if (!(t is BigDouble) && !(t is double)) {
-    throw "pow() accepts either a power of [BigDouble] or [double]!";
+  if (!(t is BigDouble) && !(t is num)) {
+    throw "pow() accepts either a power of [BigDouble] or [num]!";
   }
-  double power = t is BigDouble ? t.toDouble() : t;
-  if (value.mantissa.isZero) {
-    return power.isZero ? BigDouble.one : value;
-  }
-  if (value._mantissa.isNegative && !CasualNumerics.isSafe(power.abs())) {
-    return BigDouble.nan;
-  } else if (value.exponent == 1 && value.mantissa - 1 < -double.maxFinite) {
-    return pow10(power, (tolerance ?? roundTolerance));
-  }
-  double fast = value.exponent * power;
-  double mantissa;
-  if (CasualNumerics.isSafe(fast.abs())) {
-    mantissa = dart_math.pow(value.mantissa, power).toDouble();
-    if (mantissa.isFinite && !mantissa.isZero) {
-      return _normalize(mantissa, fast.toInt());
+  double power = t is BigDouble
+      ? t.toDouble()
+      : t is int
+          ? t.toDouble()
+          : t;
+  int temp = (value.exponent * power).toInt();
+  late double newMantissa;
+  if (CasualNumerics.isSafe(temp)) {
+    newMantissa = dart_math.pow(value.mantissa, power).toDouble();
+    if (newMantissa.isFinite && newMantissa != 0) {
+      return BigDouble(newMantissa, temp);
     }
   }
-  int newExp = fast.toInt();
-  double residual2 = fast - newExp;
-  mantissa = dart_math
-      .pow(10, power * CasualNumerics.log10(value.mantissa) + residual2)
+  int newExp = temp.toInt();
+  int residue = temp - newExp;
+  newMantissa = dart_math
+      .pow(10, power * CasualNumerics.log10(value.mantissa) + residue)
       .toDouble();
-  if (mantissa.isFinite && !mantissa.isZero) {
-    return _normalize(mantissa, newExp);
+  if (newMantissa.isFinite && newMantissa != 0) {
+    return BigDouble(newMantissa, newExp);
   }
-  BigDouble res = pow10(
-      power * (value.exponent + CasualNumerics.log10(value.mantissa.abs())),
-      (tolerance ?? roundTolerance));
-  return value.sign == -1 && power % 2 == 1 ? -res : res;
+  BigDouble res = pow10(power * absLog10(value));
+  if (value.sign == -1) {
+    if ((temp % 2).abs() == 1) {
+      return -res;
+    } else if ((temp % 2).abs() == 0) {
+      return res;
+    }
+    return BigDouble.nan;
+  }
+  return res;
 }
 
 /// Similar to [pow] but you can use another [BigDouble] as the power. Internally delegates to [pow]

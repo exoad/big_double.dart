@@ -25,10 +25,8 @@ class CasualNumerics {
   /// Returns the base 10 logarithm of this [num] instance.
   static double log10(num x) => dart_math.log(x) / dart_math.ln10;
 
-  static bool isSafe(double x) {
-    return isJavaScript
-        ? x > -9007199254740991 && x < 9007199254740991 && x.floor() == x
-        : x.isZero;
+  static bool isSafe(num x) {
+    return x.abs() < 9007199254740991 && x.floor() == x;
   }
 
   /// Returns whether [a] and [b] are within

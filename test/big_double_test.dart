@@ -1,8 +1,11 @@
+import "dart:math";
+
 import "package:big_double/big_double.dart";
 import "package:big_double/src/helpers.dart";
 import "package:big_double/src/powers_of_10.dart";
 import "package:test/test.dart";
 
+final Random rng = Random(DateTime.now().millisecondsSinceEpoch);
 void main() {
   print(
       "${identical(1.0, 1) ? "running WEB" : "running NATIVE"}\nInt_Max = $maxInt\nInt_Min = $minInt");
@@ -69,6 +72,34 @@ void main() {
     test("BigDouble(300) ^ 300 == 1.368e743", () {
       expect(pow(300.big, 300).toString(), "1.368914790585681e743");
     });
+  });
+  group("BigDouble pow10", () {
+    late BigDouble x;
+    late int exp;
+    for (int i = 0; i < 100; i++) {
+      exp = rng.nextInt(999999);
+      x = pow10(exp);
+      test("1 == x_mantissa ${x.mantissa}", () {
+        expect(x.mantissa, 1);
+      });
+      test("$exp exp == x_exponent ${x.exponent}", () {
+        expect(x.exponent, exp);
+      });
+    }
+    late double dExp;
+    late double mantissa;
+    for (int i = 0; i < 100; i++) {
+      exp = rng.nextInt(100) + 1;
+      mantissa = rng.nextInt(10) + 1;
+      dExp = exp + CasualNumerics.log10(mantissa);
+      x = pow10(dExp);
+      test("Tolerance (x_mantissa - mantissa) < 1e-8", () {
+        expect(x.mantissa - mantissa < 0.00000001, true);
+      });
+      test("$exp exp == x_exponent ${x.exponent} (2)", () {
+        expect(x.exponent, exp);
+      });
+    }
   });
   group("BigDouble.floor", () {
     test("BigDouble.fromValue(0.9).floor == BigDouble.zero", () {
