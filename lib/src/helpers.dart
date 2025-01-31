@@ -33,6 +33,15 @@ class CasualNumerics {
   static bool isEquatable(double a, double b, {double tolerance = roundTolerance}) {
     return (a - b).abs() < tolerance;
   }
+
+  /// Checks whether [value] is an integer value
+  static bool isInt(dynamic value) {
+    return value is int && value is double
+        ? value.isInfinite || value.isNaN || value.abs() > (1 << 53)
+            ? false
+            : value.truncateToDouble() == value
+        : false;
+  }
 }
 
 final class ZeroStringInterner {

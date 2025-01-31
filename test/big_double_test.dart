@@ -73,17 +73,17 @@ void main() {
       expect(pow(300.big, 300).toString(), "1.368914790585681e743");
     });
   });
-  group("BigDouble pow10", () {
-    late BigDouble x;
+  group("BigDouble pow10: ", () {
+    late BigDouble model;
     late int exp;
     for (int i = 0; i < 100; i++) {
       exp = rng.nextInt(999999);
-      x = pow10(exp);
-      test("1 == x_mantissa ${x.mantissa}", () {
-        expect(x.mantissa, 1);
+      model = pow10(exp.toDouble());
+      test("1 == x_mantissa ${model.mantissa}", () {
+        expect(model.mantissa, 1.0);
       });
-      test("$exp exp == x_exponent ${x.exponent}", () {
-        expect(x.exponent, exp);
+      test("$exp exp == x_exponent ${model.exponent}", () {
+        expect(model.exponent == exp, true);
       });
     }
     late double dExp;
@@ -92,14 +92,24 @@ void main() {
       exp = rng.nextInt(100) + 1;
       mantissa = rng.nextInt(10) + 1;
       dExp = exp + CasualNumerics.log10(mantissa);
-      x = pow10(dExp);
+      model = pow10(dExp);
       test("Tolerance (x_mantissa - mantissa) < 1e-8", () {
-        expect(x.mantissa - mantissa < 0.00000001, true);
+        expect(model.mantissa - mantissa < 0.00000001, true);
       });
-      test("$exp exp == x_exponent ${x.exponent} (2)", () {
-        expect(x.exponent, exp);
+      test("$exp exp == x_exponent ${model.exponent} (2)", () {
+        expect(model.exponent == exp, true);
       });
     }
+  });
+  group("BigDouble pow: ", () {
+    BigDouble two = 2.big;
+    BigDouble tolerance = 1e-10.big;
+    test("1 == 2^0", () => expect(1.big, pow(two, 0)));
+    test("2 == 2^1", () => expect(two, pow(two, 1)));
+    test("4 == 2^2", () => expect(4.big, pow(two, 2)));
+    test("1125899906842624 == 2^50", () => expect(1125899906842624.big, pow(two, 50)));
+    // test("1448.1546878700492 ~=($tolerance)=~ 2^10.5",
+    //     () => expect(1448.1546878700492.big, pow(two, 10.5)));
   });
   group("BigDouble.floor", () {
     test("BigDouble.fromValue(0.9).floor == BigDouble.zero", () {

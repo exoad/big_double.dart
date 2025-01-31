@@ -59,7 +59,7 @@ BigDouble exp(BigDouble value) {
   double x = value.toDouble();
   return -706 < x && x < 709
       ? BigDouble.fromValue(dart_math.exp(x))
-      : powBig(BigDouble.fromValue(dart_math.e), value);
+      : pow(BigDouble.fromValue(dart_math.e), value);
 }
 
 /// Performs a square root on the [BigDouble] instance.
@@ -125,12 +125,10 @@ double ln(BigDouble value) {
 }
 
 /// Computes 10^power with tolerance
-BigDouble pow10(num power, [double? tolerance]) {
-  int v = power.toInt();
-  double residual = power.toDouble() - v;
-  return residual.abs() < (tolerance ?? roundTolerance)
-      ? BigDouble._noNormalize(1, v)
-      : _normalize(dart_math.pow(10, residual).toDouble(), v);
+BigDouble pow10(double power, [double? tolerance]) {
+  return CasualNumerics.isInt(power)
+      ? BigDouble._noNormalize(1, power.truncate())
+      : _normalize(dart_math.pow(10, power % 1), power.truncate());
 }
 
 /// Raises a BigDouble [value] to [power] (ie [value] ^ [t]). Exponentiation
@@ -169,11 +167,6 @@ BigDouble pow(BigDouble value, dynamic t, [double? tolerance]) {
     return BigDouble.nan;
   }
   return res;
-}
-
-/// Similar to [pow] but you can use another [BigDouble] as the power. Internally delegates to [pow]
-BigDouble powBig(BigDouble value, BigDouble power, [double? tolerance]) {
-  return pow(value, power.toDouble(), tolerance);
 }
 
 /// For altering the mantissa and exponent values within [BigDouble]. BigDouble by itself
@@ -338,6 +331,12 @@ class BigDouble implements Comparable<BigDouble> {
   /// Named [Object.==]
   bool equals(covariant Object other) {
     return this == other;
+  }
+
+  /// An alternative to [BigDouble.==] but instead there is a [tolerance] for checking equality.
+  bool almostEquals(covariant BigDouble other, [BigDouble? tolerance]) {
+    tolerance ??= roundToleranceForm;
+    return (this - other).abs() <= max(this.abs(), other.abs()) * tolerance;
   }
 
   /// Returns the mantissa
