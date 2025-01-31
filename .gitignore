@@ -4,3 +4,4 @@
 repo/
 /test_results
 box
+*.exe
