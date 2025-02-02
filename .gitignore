@@ -5,3 +5,7 @@ repo/
 /test_results
 box
 *.exe
+*.out
+*.so
+*.dll
+*.obj
