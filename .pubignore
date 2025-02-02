@@ -5,3 +5,14 @@ repo/
 docs/
 box
 *.exe
+.dart_tool/
+.vscode
+.idea
+repo/
+/test_results
+box
+*.exe
+*.out
+*.so
+*.dll
+*.obj
