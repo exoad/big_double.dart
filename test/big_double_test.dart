@@ -79,7 +79,8 @@ void main() {
     for (int i = 0; i < 100; i++) {
       exp = rng.nextInt(999999);
       model = pow10(exp.toDouble());
-      test("1 == x_mantissa ${model.mantissa}", () {
+      test("1 == model_mantissa ${model.mantissa}", () {
+        print("sus amogus: ${model.mantissa}");
         expect(model.mantissa, 1.0);
       });
       test("$exp exp == x_exponent ${model.exponent}", () {
