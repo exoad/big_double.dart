@@ -73,20 +73,24 @@ void main() {
       expect(pow(300.big, 300).toString(), "1.368914790585681e743");
     });
   });
-  group("BigDouble pow10: ", () {
+  group("BigDouble pow10 (Test 1): ", () {
     late BigDouble model;
     late int exp;
     for (int i = 0; i < 100; i++) {
       exp = rng.nextInt(999999);
       model = pow10(exp.toDouble());
-      test("1 == model_mantissa ${model.mantissa}", () {
-        print("sus amogus: ${model.mantissa}");
+      test("1.0 == model_mantissa ${model.mantissa}", () {
         expect(model.mantissa, 1.0);
       });
       test("$exp exp == x_exponent ${model.exponent}", () {
         expect(model.exponent == exp, true);
       });
     }
+  });
+
+  group("BigDouble pow10 (Test 2):", () {
+    late BigDouble model;
+    late int exp;
     late double dExp;
     late double mantissa;
     for (int i = 0; i < 100; i++) {
